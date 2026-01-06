@@ -1,0 +1,33 @@
+.hitRoll, .DmgRoll {
+    box-shadow: #ffffff 0px 1px 3px 0px, #ffffff 0px 0px 0px 1px;
+    border-radius: 5px;
+}
+.action-container .hitRoll, .DmgRoll {
+    margin-bottom: 1vw;
+    margin-top: .5vw;
+    padding: 5px 5px 5px 10px;
+}
+.action-container * {
+    color: white;
+}
+
+.action-container {
+    padding: 10px;
+    background: black;
+    min-width: 150px;
+    width: max-content;
+    border-radius: 10px;
+}
+
+.action-container button {
+    background-color: red;
+    padding: 5px 10px;
+    border: unset;
+    border-radius: 20px;
+}
+
+.rollname {
+    margin-bottom: 1vw;
+    text-transform: uppercase;
+    font-weight: 600;
+}
