@@ -1,93 +1,154 @@
-/* =========================
-   NORMAL COPY BUTTON
-   ========================= */
-document.querySelectorAll('.copy-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    if (btn.classList.contains('disabled')) return;
+/* =====================================================
+   ELEMENT REFERENCES
+   ===================================================== */
 
-    const valueEl = btn.previousElementSibling;
-    const rawText = valueEl.innerText.trim();
-
-    copyWithFeedback(btn, `!(${rawText})`);
-  });
-});
-
-/* =========================
-   ADV / DIS COPY BUTTON
-   ========================= */
-document.querySelectorAll('.adv-copy-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    if (btn.classList.contains('disabled')) return;
-
-    // span is two siblings back: [span][copy][adv]
-    const valueEl = btn.previousElementSibling.previousElementSibling;
-    const rawText = valueEl.innerText.trim();
-
-    // Convert leading 1D → 2D
-    const advText = rawText.replace(/^1D/i, '2D');
-
-    copyWithFeedback(btn, `!(${advText})`);
-  });
-});
-
-/* =========================
-   SHARED COPY FEEDBACK
-   ========================= */
-function copyWithFeedback(button, text) {
-  navigator.clipboard.writeText(text).then(() => {
-    const originalText = button.innerText;
-
-    button.innerText = 'Copied!';
-    button.classList.add('copied');
-
-    setTimeout(() => {
-      button.innerText = originalText;
-      button.classList.remove('copied');
-    }, 1200);
-  });
-}
-
-/* =========================
-   EDIT / SAVE MODE
-   ========================= */
+/* Name */
+const nameEl = document.querySelector('.name');
 const editBtn = document.querySelector('.edit-btn');
 
-const editables = [
-  document.querySelector('.name'),
-  document.querySelector('.hitRollValue'),
-  document.querySelector('.DmgRollValue')
-];
+/* HIT ROLL */
+const hitCount = document.querySelector('.hit-count');
+const hitMod = document.querySelector('.hit-mod');
+const hitOut = document.querySelector('.hit-output');
+const hitCopy = document.querySelector('.hit-copy');
+const hitAdv = document.querySelector('.hit-adv');
 
-const copyButtons = document.querySelectorAll('.copy-btn');
-const advButtons = document.querySelectorAll('.adv-copy-btn');
+/* DAMAGE ROLL */
+const dmgCount = document.querySelector('.dmg-count');
+const dmgDie = document.querySelector('.dmg-die');
+const dmgMod = document.querySelector('.dmg-mod');
+const dmgOut = document.querySelector('.dmg-output');
+const dmgCopy = document.querySelector('.dmg-copy');
 
-let isEditing = false;
+let editingName = false;
 
-/* Load saved values on startup */
-editables.forEach(el => {
-  const key = el.className;
-  const savedValue = localStorage.getItem(key);
-  if (savedValue) {
-    el.innerText = savedValue;
-  }
+/* =====================================================
+   ROLL BUILDERS
+   ===================================================== */
+
+function buildHit(countOverride = null) {
+    const count = countOverride ?? Number(hitCount.value);
+    const mod = Number(hitMod.value);
+
+    let roll = `${count}D20`;
+
+    if (mod > 0) roll += `+${mod}`;
+    if (mod < 0) roll += `${mod}`;
+
+    hitOut.innerText = roll;
+    return roll;
+}
+
+function buildDamage() {
+    const count = Number(dmgCount.value);
+    const die = dmgDie.value;
+    const mod = Number(dmgMod.value);
+
+    let roll = `${count}D${die}`;
+
+    if (mod > 0) roll += `+${mod}`;
+    if (mod < 0) roll += `${mod}`;
+
+    dmgOut.innerText = roll;
+    return roll;
+}
+
+/* =====================================================
+   ADV/DIS VALIDATION (HIT ONLY)
+   ===================================================== */
+
+function updateHitAdvState() {
+    const isValid = Number(hitCount.value) === 1;
+    hitAdv.classList.toggle('disabled', !isValid);
+}
+
+/* =====================================================
+   INPUT HANDLERS (ALWAYS LIVE)
+   ===================================================== */
+
+/* Hit inputs */
+[hitCount, hitMod].forEach(el => {
+    el.addEventListener('input', () => {
+        buildHit();
+        updateHitAdvState();
+        saveDiceData();
+    });
 });
 
-/* Toggle Edit / Save */
+/* Damage inputs */
+[dmgCount, dmgDie, dmgMod].forEach(el => {
+    el.addEventListener('input', () => {
+        buildDamage();
+        saveDiceData();
+    });
+});
+
+/* =====================================================
+   COPY BUTTONS
+   ===================================================== */
+
+hitCopy.addEventListener('click', () => {
+    navigator.clipboard.writeText(`!(${buildHit()})`);
+});
+
+hitAdv.addEventListener('click', () => {
+    if (hitAdv.classList.contains('disabled')) return;
+    navigator.clipboard.writeText(`!(${buildHit(2)})`);
+});
+
+dmgCopy.addEventListener('click', () => {
+    navigator.clipboard.writeText(`!(${buildDamage()})`);
+});
+
+/* =====================================================
+   NAME EDIT MODE (ONLY EDITABLE FIELD)
+   ===================================================== */
+
 editBtn.addEventListener('click', () => {
-  isEditing = !isEditing;
+    editingName = !editingName;
 
-  editables.forEach(el => {
-    el.contentEditable = isEditing;
+    nameEl.contentEditable = editingName;
 
-    if (!isEditing) {
-      localStorage.setItem(el.className, el.innerText.trim());
+    if (editingName) {
+        nameEl.focus();
     }
-  });
 
-  // Disable copy buttons while editing
-  [...copyButtons, ...advButtons].forEach(btn => {
-    btn.classList.toggle('disabled', isEditing);
-  });
 
-  editBtn.innerText = isEditing ? 'Save' : 'Edit';
+    if (!editingName) {
+        localStorage.setItem('charName', nameEl.innerText.trim());
+    }
+
+    editBtn.innerText = editingName ? 'Save' : 'Edit';
 });
+
+/* =====================================================
+   PERSISTENCE
+   ===================================================== */
+
+function saveDiceData() {
+    localStorage.setItem('diceData', JSON.stringify({
+        hitCount: hitCount.value,
+        hitMod: hitMod.value,
+        dmgCount: dmgCount.value,
+        dmgDie: dmgDie.value,
+        dmgMod: dmgMod.value
+    }));
+}
+
+(function loadSavedData() {
+    const diceData = JSON.parse(localStorage.getItem('diceData') || '{}');
+    const savedName = localStorage.getItem('charName');
+
+    if (savedName) nameEl.innerText = savedName;
+
+    hitCount.value = diceData.hitCount ?? 1;
+    hitMod.value = diceData.hitMod ?? 0;
+
+    dmgCount.value = diceData.dmgCount ?? 1;
+    dmgDie.value = diceData.dmgDie ?? 8;
+    dmgMod.value = diceData.dmgMod ?? 0;
+
+    buildHit();
+    buildDamage();
+    updateHitAdvState();
+})();
