@@ -1,0 +1,59 @@
+.mainCont {
+    min-height: 100vh;
+    position: relative;
+    isolation: isolate;
+    background: rgb(111, 109, 254);
+    background: linear-gradient(90deg, rgba(111, 109, 254, 1) 30%, rgba(192, 149, 255, 1) 84%);
+}
+
+.firstSect::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: transparent;
+    /* background: url(https://wiki-new.ubiquity.com/bin/download/Dash%20Solutions/CX%20Dash%20Solutions/WebHome/dash_Desktop-Hero_9.25.png?rev=1.1) no-repeat, #1c2a50; */
+    z-index: -1;
+    background-position: top right;
+    filter: brightness(0.7);
+}
+
+.xNavlogo a {
+    color: transparent;
+    display: block;
+    margin-left: 2vw;
+    transition: all 0.1s;
+    background: url(https://wiki-new.ubiquity.com/bin/download/Current/Current%20-%20MX%20Services/WebHome/Logo-Current.png?rev=1.1) center no-repeat, transparent;
+    background-size: contain;
+    height: 100%;
+    width: 10vw;
+    position: relative;
+}
+
+.xNavlogo a::after {
+    content: "MX Services";
+    position: absolute;
+    font-size: 0.8vw;
+    z-index: 1;
+    top: 0;
+    bottom: .2vw;
+    left: 6vw;
+    font-size: 15px;
+    text-wrap-mode: nowrap;
+    color: #ffffff;
+    font-weight: 600;
+    text-shadow: 1px 1px #e80c89 !important;
+}
+
+.xNavBar > li > a {
+    color: black;
+    padding: 0.5vw 1vw;
+    font-size: 1.35rem;
+    letter-spacing: 0.5px;
+    transition: all 0.15s;
+    text-align: center;
+    font-weight: bold;
+}
+
