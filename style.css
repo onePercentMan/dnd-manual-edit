@@ -10,7 +10,7 @@ body {
   padding: 14px;
   border-radius: 12px;
   width: max-content;
-  box-shadow: rgba(255, 255, 255, 0.15) 0 0 0 1px;
+  box-shadow: rgba(255,255,255,0.15) 0 0 0 1px;
 }
 
 .header {
@@ -21,13 +21,13 @@ body {
 
 .name[contenteditable="true"] {
   outline: 1px dashed #39aa47;
-  background: rgba(57, 170, 71, 0.15);
+  background: rgba(57,170,71,0.15);
   padding: 2px 6px;
   border-radius: 4px;
 }
 
 .roll {
-  border: 2px solid #e40712;
+  border: 1px solid #fff;
   border-radius: 6px;
   padding: 10px;
   margin-bottom: 12px;
@@ -64,7 +64,7 @@ body {
 }
 
 button {
-  background: #e40712;
+  background: #c62828;
   color: #fff;
   border: none;
   border-radius: 20px;

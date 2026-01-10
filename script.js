@@ -39,7 +39,7 @@ function copyWithFeedback(button, text) {
 }
 
 /* =====================================================
-   LABEL HELPERS (TaleSpire chat syntax)
+   LABEL HELPERS
    ===================================================== */
 
 function baseName() {
@@ -59,7 +59,7 @@ function dmgLabel(roll) {
    ===================================================== */
 
 function buildHit(countOverride = null) {
-  const count = countOverride ?? Number(hitCount.value);
+  const count = countOverride ?? 1; // always default to 1
   const mod   = Number(hitMod.value);
 
   let roll = `${count}d20`;
@@ -71,10 +71,13 @@ function buildHit(countOverride = null) {
 }
 
 function buildDamage() {
-  let roll = `${dmgCount.value}d${dmgDie.value}`;
+  const count = Number(dmgCount.value);
+  const die   = dmgDie.value;
+  const mod   = Number(dmgMod.value);
 
-  if (dmgMod.value > 0) roll += `+${dmgMod.value}`;
-  if (dmgMod.value < 0) roll += `${dmgMod.value}`;
+  let roll = `${count}d${die}`;
+  if (mod > 0) roll += `+${mod}`;
+  if (mod < 0) roll += `${mod}`;
 
   dmgOut.innerText = roll;
   return roll;
@@ -85,14 +88,14 @@ function buildDamage() {
    ===================================================== */
 
 function updateAdv() {
-  hitAdv.classList.toggle('disabled', Number(hitCount.value) !== 1);
+  hitAdv.classList.toggle('disabled', hitCount.value !== '1');
 }
 
 /* =====================================================
    INPUT LISTENERS
    ===================================================== */
 
-[hitCount, hitMod].forEach(el => {
+[hitMod].forEach(el => {
   el.addEventListener('input', () => {
     buildHit();
     updateAdv();
@@ -146,7 +149,6 @@ editBtn.addEventListener('click', () => {
    ===================================================== */
 
 function save() {
-  /* NOTE: hitCount is intentionally NOT saved */
   localStorage.setItem('diceData', JSON.stringify({
     hitMod: hitMod.value,
     dmgCount: dmgCount.value,
@@ -161,12 +163,11 @@ function save() {
 
   if (savedName) nameEl.innerText = savedName;
 
-  /* ALWAYS reset hit count to 1 */
   hitCount.value = 1;
   hitMod.value   = data.hitMod ?? 0;
 
   dmgCount.value = data.dmgCount ?? 1;
-  dmgDie.value   = data.dmgDie ?? 8;
+  dmgDie.value   = data.dmgDie ?? 8; // defaults to one-handed
   dmgMod.value   = data.dmgMod ?? 0;
 
   buildHit();
