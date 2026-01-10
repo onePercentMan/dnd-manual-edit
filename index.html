@@ -2,42 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Personal Dice Tool</title>
+  <title>Personal Dice Tool (TaleSpire)</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <div class="action-container">
 
-  <!-- HEADER / NAME -->
+  <!-- HEADER -->
   <div class="header">
-    <!-- THIS is the label used when copying -->
-    <span class="name">Rapier Attack</span>
+    <span class="name">Weapon</span>
     <button class="edit-btn">Edit</button>
   </div>
 
-  <!-- =========================
-       HIT ROLL (d20 ONLY)
-       ========================= -->
+  <!-- HIT ROLL -->
   <div class="roll hit-roll">
     <div class="rollname">Hit</div>
 
     <div class="dice-inputs">
-      <input
-        type="number"
-        class="hit-count"
-        min="1"
-        value="1"
-        title="Number of d20s"
-      >
+      <!-- ALWAYS defaults to 1 -->
+      <input type="number" class="hit-count" min="1" value="1">
       <span class="fixed-die">d20</span>
-      <input
-        type="number"
-        class="hit-mod"
-        value="0"
-        title="Hit modifier"
-      >
+      <input type="number" class="hit-mod" value="0">
     </div>
 
     <div class="roll-output hit-output"></div>
@@ -48,21 +34,13 @@
     </div>
   </div>
 
-  <!-- =========================
-       DAMAGE ROLL
-       ========================= -->
+  <!-- DAMAGE ROLL -->
   <div class="roll dmg-roll">
     <div class="rollname">Damage</div>
 
     <div class="dice-inputs">
-      <input
-        type="number"
-        class="dmg-count"
-        min="1"
-        value="1"
-        title="Number of damage dice"
-      >
-      <select class="dmg-die" title="Damage die">
+      <input type="number" class="dmg-count" min="1" value="1">
+      <select class="dmg-die">
         <option value="4">d4</option>
         <option value="6">d6</option>
         <option value="8" selected>d8</option>
@@ -70,19 +48,13 @@
         <option value="12">d12</option>
         <option value="20">d20</option>
       </select>
-      <input
-        type="number"
-        class="dmg-mod"
-        value="0"
-        title="Damage modifier"
-      >
+      <input type="number" class="dmg-mod" value="0">
     </div>
 
     <div class="roll-output dmg-output"></div>
 
     <div class="roll-actions">
       <button class="copy-btn dmg-copy">Copy</button>
-      <!-- NO ADV/DIS HERE BY DESIGN -->
     </div>
   </div>
 
