@@ -2,69 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Personal Dice Tool</title>
+  <title>Dice Tool (UI Driven)</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="action-container">
-
-  <!-- HEADER -->
-  <div class="header">
-    <span class="name">Burn Seal Necrotic</span>
-    <button class="edit-btn">Edit</button>
-  </div>
-
-  <!-- HIT ROLL -->
-  <div class="roll hit-roll">
-    <div class="rollname">Hit</div>
-
-    <div class="dice-inputs">
-      <input type="number" class="hit-count" min="1" value="1">
-      <span class="fixed-die">d20</span>
-      <input type="number" class="hit-mod" value="0">
-    </div>
-
-    <div class="roll-output hit-output"></div>
-
-    <div class="roll-actions">
-      <button class="copy-btn hit-copy">Copy</button>
-      <button class="adv-copy-btn hit-adv">Adv/Dis</button>
-    </div>
-  </div>
-
-  <!-- DAMAGE ROLL -->
-  <div class="roll dmg-roll">
-    <div class="rollname">Damage</div>
-
-    <div class="dice-inputs">
-      <input type="number" class="dmg-count" min="1" value="1">
-      <select class="dmg-die">
-        <option value="4">d4</option>
-        <option value="6">d6</option>
-        <option value="8">d8</option>
-        <option value="10">d10</option>
-        <option value="12">d12</option>
-        <option value="20">d20</option>
-      </select>
-      <input type="number" class="dmg-mod" value="0">
-    </div>
-
-    <!-- SEALS -->
-    <div class="dice-inputs">
-      <label class="seal-label">Seals</label>
-      <input type="number" class="seal-count" min="0" value="0">
-      <span class="seal-info">(2D6 per seal)</span>
-    </div>
-
-    <div class="roll-output dmg-output"></div>
-
-    <div class="roll-actions">
-      <button class="copy-btn dmg-copy">Copy</button>
-    </div>
-  </div>
-
-</div>
+<button id="add">Add Action</button>
+<div id="app"></div>
 
 <script src="script.js"></script>
 </body>

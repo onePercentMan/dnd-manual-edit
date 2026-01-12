@@ -1,182 +1,164 @@
-/* =====================================================
-   ELEMENTS
-   ===================================================== */
+const app = document.getElementById("app");
+const addBtn = document.getElementById("add");
 
-const nameEl  = document.querySelector('.name');
-const editBtn = document.querySelector('.edit-btn');
+const STORAGE_KEY = "dice_actions";
 
-/* HIT */
-const hitCount = document.querySelector('.hit-count');
-const hitMod   = document.querySelector('.hit-mod');
-const hitOut   = document.querySelector('.hit-output');
-const hitCopy  = document.querySelector('.hit-copy');
-const hitAdv   = document.querySelector('.hit-adv');
+/* =========================
+   Clipboard helper
+========================= */
 
-/* DAMAGE */
-const dmgCount = document.querySelector('.dmg-count');
-const dmgDie   = document.querySelector('.dmg-die');
-const dmgMod   = document.querySelector('.dmg-mod');
-const sealCount = document.querySelector('.seal-count');
-const dmgOut   = document.querySelector('.dmg-output');
-const dmgCopy  = document.querySelector('.dmg-copy');
-
-let editingName = false;
-
-/* =====================================================
-   COPY FEEDBACK
-   ===================================================== */
-
-function copyWithFeedback(button, text) {
+function copy(btn, text) {
   navigator.clipboard.writeText(text).then(() => {
-    const original = button.innerText;
-    button.innerText = 'Copied!';
-    button.classList.add('copied');
-
+    const t = btn.innerText;
+    btn.innerText = "Copied!";
+    btn.classList.add("copied");
     setTimeout(() => {
-      button.innerText = original;
-      button.classList.remove('copied');
-    }, 1200);
+      btn.innerText = t;
+      btn.classList.remove("copied");
+    }, 1000);
   });
 }
 
-/* =====================================================
-   LABEL HELPERS
-   ===================================================== */
+/* =========================
+   UI builders
+========================= */
 
-function baseName() {
-  return nameEl.innerText.trim();
+function dieSelect(value = "8") {
+  return `
+    <select class="die">
+      ${["4","6","8","10","12"].map(d =>
+        `<option value="${d}" ${d===value?"selected":""}>d${d}</option>`
+      ).join("")}
+    </select>
+  `;
 }
 
-function hitLabel(roll) {
-  return `${baseName()} Hit !(${roll})`;
+function damageRow(data = {}) {
+  return `
+    <div class="row dmg-row">
+      <input class="damage-label" value="${data.label || "Damage"}">
+      <input type="number" class="count" value="${data.count ?? 1}" min="1">
+      ${dieSelect(data.die || "8")}
+      <input type="number" class="mod" value="${data.mod ?? 0}">
+      <button class="copy-dmg">Copy</button>
+    </div>
+  `;
 }
 
-function dmgLabel(roll) {
-  return `${baseName()} Dmg !(${roll})`;
-}
+/* =========================
+   Core action builder
+========================= */
 
-/* =====================================================
-   BUILDERS
-   ===================================================== */
+function createAction(data = {}) {
+  const el = document.createElement("div");
+  el.className = "action";
 
-function buildHit(countOverride = null) {
-  const count = countOverride ?? Number(hitCount.value);
-  const mod = Number(hitMod.value);
+  el.innerHTML = `
+    <div class="header">
+      <input class="name" value="${data.name || "New Action"}">
+    </div>
 
-  let roll = `${count}D20`;
-  if (mod > 0) roll += `+${mod}`;
-  if (mod < 0) roll += `${mod}`;
+    <div class="roll">
+      <div class="rollname">Hit</div>
+      <div class="row">
+        <span class="small">Modifier</span>
+        <input type="number" class="hit-mod" value="${data.hitMod ?? 0}">
+        <button class="hit">Copy</button>
+        <button class="adv">Adv</button>
+      </div>
+    </div>
 
-  hitOut.innerText = roll;
-  return roll;
-}
+    <div class="roll">
+      <div class="rollname">Damage</div>
+      <div class="damage-options"></div>
+      <button class="add-dmg">Add Damage Option</button>
+    </div>
+  `;
 
-function buildDamage() {
-  let roll = `${dmgCount.value}D${dmgDie.value}`;
+  const nameInput = el.querySelector(".name");
+  const hitMod = el.querySelector(".hit-mod");
+  const dmgBox = el.querySelector(".damage-options");
 
-  if (dmgMod.value > 0) roll += `+${dmgMod.value}`;
-  if (dmgMod.value < 0) roll += `${dmgMod.value}`;
+  (data.damages?.length ? data.damages : [{}]).forEach(d =>
+    dmgBox.insertAdjacentHTML("beforeend", damageRow(d))
+  );
 
-  const seals = Number(sealCount.value);
-  if (seals > 0) {
-    roll += `+${seals * 2}D6`;
+  el.querySelector(".hit").onclick = e =>
+    copy(e.target, `!${nameInput.value} Hit:1d20+${hitMod.value}`);
+
+  el.querySelector(".adv").onclick = e =>
+    copy(e.target, `!${nameInput.value} Hit:2d20+${hitMod.value}`);
+
+  el.querySelector(".add-dmg").onclick = () => {
+    if (dmgBox.children.length >= 2) return;
+    dmgBox.insertAdjacentHTML("beforeend", damageRow({ label: "Alt" }));
+    bindDamage();
+    saveAll();
+  };
+
+  function bindDamage() {
+    dmgBox.querySelectorAll(".dmg-row").forEach(row => {
+      const btn = row.querySelector(".copy-dmg");
+      const label = row.querySelector(".damage-label");
+      const count = row.querySelector(".count");
+      const die = row.querySelector(".die");
+      const mod = row.querySelector(".mod");
+
+      btn.onclick = () => {
+        let roll = `${count.value}d${die.value}`;
+        if (mod.value > 0) roll += `+${mod.value}`;
+        if (mod.value < 0) roll += mod.value;
+
+        copy(btn, `!${nameInput.value} Dmg (${label.value}):${roll}`);
+      };
+
+      [label, count, die, mod].forEach(el =>
+        el.addEventListener("input", saveAll)
+      );
+    });
   }
 
-  dmgOut.innerText = roll;
-  return roll;
+  [nameInput, hitMod].forEach(el =>
+    el.addEventListener("input", saveAll)
+  );
+
+  bindDamage();
+  app.appendChild(el);
 }
 
-/* =====================================================
-   ADV VALIDATION
-   ===================================================== */
+/* =========================
+   Persistence
+========================= */
 
-function updateAdv() {
-  hitAdv.classList.toggle('disabled', Number(hitCount.value) !== 1);
-}
-
-/* =====================================================
-   INPUT LISTENERS
-   ===================================================== */
-
-[hitCount, hitMod].forEach(el => {
-  el.addEventListener('input', () => {
-    buildHit();
-    updateAdv();
-    save();
-  });
-});
-
-[dmgCount, dmgDie, dmgMod, sealCount].forEach(el => {
-  el.addEventListener('input', () => {
-    buildDamage();
-    save();
-  });
-});
-
-/* =====================================================
-   COPY ACTIONS
-   ===================================================== */
-
-hitCopy.addEventListener('click', () => {
-  copyWithFeedback(hitCopy, hitLabel(buildHit()));
-});
-
-hitAdv.addEventListener('click', () => {
-  if (hitAdv.classList.contains('disabled')) return;
-  copyWithFeedback(hitAdv, hitLabel(buildHit(2)));
-});
-
-dmgCopy.addEventListener('click', () => {
-  copyWithFeedback(dmgCopy, dmgLabel(buildDamage()));
-});
-
-/* =====================================================
-   NAME EDIT
-   ===================================================== */
-
-editBtn.addEventListener('click', () => {
-  editingName = !editingName;
-  nameEl.contentEditable = editingName;
-
-  if (editingName) {
-    nameEl.focus();
-  } else {
-    localStorage.setItem('baseName', baseName());
-  }
-
-  editBtn.innerText = editingName ? 'Save' : 'Edit';
-});
-
-/* =====================================================
-   PERSISTENCE
-   ===================================================== */
-
-function save() {
-  localStorage.setItem('diceData', JSON.stringify({
-    hitCount: hitCount.value,
-    hitMod: hitMod.value,
-    dmgCount: dmgCount.value,
-    dmgDie: dmgDie.value,
-    dmgMod: dmgMod.value,
-    seals: sealCount.value
+function saveAll() {
+  const actions = [...document.querySelectorAll(".action")].map(a => ({
+    name: a.querySelector(".name").value,
+    hitMod: a.querySelector(".hit-mod").value,
+    damages: [...a.querySelectorAll(".dmg-row")].map(r => ({
+      label: r.querySelector(".damage-label").value,
+      count: r.querySelector(".count").value,
+      die: r.querySelector(".die").value,
+      mod: r.querySelector(".mod").value
+    }))
   }));
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(actions));
 }
 
-(function load() {
-  const data = JSON.parse(localStorage.getItem('diceData') || '{}');
-  const savedName = localStorage.getItem('baseName');
+function loadAll() {
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  if (!saved) return;
+  saved.forEach(createAction);
+}
 
-  if (savedName) nameEl.innerText = savedName;
+/* =========================
+   Init
+========================= */
 
-  hitCount.value = data.hitCount ?? 1;
-  hitMod.value   = data.hitMod ?? 0;
+addBtn.onclick = () => {
+  createAction();
+  saveAll();
+};
 
-  dmgCount.value = data.dmgCount ?? 1;
-  dmgDie.value   = data.dmgDie ?? 8;
-  dmgMod.value   = data.dmgMod ?? 0;
-  sealCount.value = data.seals ?? 0;
-
-  buildHit();
-  buildDamage();
-  updateAdv();
-})();
+loadAll();
+if (!app.children.length) createAction({ name: "True Name Trident" });

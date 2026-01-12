@@ -1,75 +1,8 @@
 body {
   background: #1b1b1b;
   font-family: system-ui, sans-serif;
-  padding: 40px;
+  padding: 30px;
   color: #fff;
-}
-
-.action-container {
-  background: #000;
-  padding: 14px;
-  border-radius: 12px;
-  width: max-content;
-  box-shadow: rgba(255,255,255,0.15) 0 0 0 1px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.name[contenteditable="true"] {
-  outline: 1px dashed #39aa47;
-  background: rgba(57,170,71,0.15);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.roll {
-  border: 1px solid #fff;
-  border-radius: 6px;
-  padding: 10px;
-  margin-bottom: 12px;
-}
-
-.rollname {
-  font-size: 11px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-.dice-inputs {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.fixed-die {
-  padding: 4px 6px;
-  background: #222;
-  border-radius: 4px;
-}
-
-.seal-label {
-  font-size: 12px;
-}
-
-.seal-info {
-  font-size: 11px;
-  opacity: 0.7;
-}
-
-.roll-output {
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.roll-actions {
-  display: flex;
-  gap: 6px;
 }
 
 button {
@@ -77,25 +10,60 @@ button {
   color: #fff;
   border: none;
   border-radius: 20px;
-  padding: 5px 12px;
-  font-size: 12px;
+  padding: 4px 10px;
   cursor: pointer;
 }
 
-.edit-btn {
-  background: #2e7d32;
+button.adv { background: #1976d2; }
+button.copied { background: #39aa47; }
+
+.action {
+  background: #000;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  box-shadow: rgba(255,255,255,0.15) 0 0 0 1px;
 }
 
-.adv-copy-btn {
-  background: #1976d2;
+.header input {
+  font-weight: 600;
+  width: 100%;
+  margin-bottom: 6px;
 }
 
-button.disabled {
-  opacity: 0.4;
-  pointer-events: none;
-  cursor: not-allowed;
+.roll {
+  border: 1px solid #fff;
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 6px;
 }
 
-button.copied {
-  background: #39aa47;
+.rollname {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.row input,
+.row select {
+  width: 60px;
+}
+
+.damage-label {
+  width: 110px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.small {
+  font-size: 11px;
+  opacity: .8;
 }
