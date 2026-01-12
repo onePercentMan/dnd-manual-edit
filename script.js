@@ -64,7 +64,7 @@ function createAction(data = {}) {
         <span class="small">Modifier</span>
         <input type="number" class="hit-mod" value="${data.hitMod ?? 0}">
         <button class="hit">Copy</button>
-        <button class="adv">Adv</button>
+        <button class="adv">Adv/Dis</button>
       </div>
     </div>
 
