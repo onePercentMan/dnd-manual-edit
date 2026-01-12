@@ -1,40 +1,39 @@
 /* =====================================================
-   ELEMENT REFERENCES
+   ELEMENTS
    ===================================================== */
 
-/* Base Name */
 const nameEl  = document.querySelector('.name');
 const editBtn = document.querySelector('.edit-btn');
 
-/* HIT ROLL */
+/* HIT */
 const hitCount = document.querySelector('.hit-count');
 const hitMod   = document.querySelector('.hit-mod');
 const hitOut   = document.querySelector('.hit-output');
 const hitCopy  = document.querySelector('.hit-copy');
 const hitAdv   = document.querySelector('.hit-adv');
 
-/* DAMAGE ROLL */
+/* DAMAGE */
 const dmgCount = document.querySelector('.dmg-count');
 const dmgDie   = document.querySelector('.dmg-die');
 const dmgMod   = document.querySelector('.dmg-mod');
+const sealCount = document.querySelector('.seal-count');
 const dmgOut   = document.querySelector('.dmg-output');
 const dmgCopy  = document.querySelector('.dmg-copy');
 
 let editingName = false;
 
 /* =====================================================
-   COPY FEEDBACK HELPER
+   COPY FEEDBACK
    ===================================================== */
 
 function copyWithFeedback(button, text) {
   navigator.clipboard.writeText(text).then(() => {
-    const originalText = button.innerText;
-
+    const original = button.innerText;
     button.innerText = 'Copied!';
     button.classList.add('copied');
 
     setTimeout(() => {
-      button.innerText = originalText;
+      button.innerText = original;
       button.classList.remove('copied');
     }, 1200);
   });
@@ -44,27 +43,25 @@ function copyWithFeedback(button, text) {
    LABEL HELPERS
    ===================================================== */
 
-function getBaseName() {
+function baseName() {
   return nameEl.innerText.trim();
 }
 
-function formatHitOutput(roll) {
-  const base = getBaseName();
-  return base ? `${base} Hit !(${roll})` : `Hit !(${roll})`;
+function hitLabel(roll) {
+  return `${baseName()} Hit !(${roll})`;
 }
 
-function formatDmgOutput(roll) {
-  const base = getBaseName();
-  return base ? `${base} Dmg !(${roll})` : `Dmg !(${roll})`;
+function dmgLabel(roll) {
+  return `${baseName()} Dmg !(${roll})`;
 }
 
 /* =====================================================
-   ROLL BUILDERS
+   BUILDERS
    ===================================================== */
 
 function buildHit(countOverride = null) {
   const count = countOverride ?? Number(hitCount.value);
-  const mod   = Number(hitMod.value);
+  const mod = Number(hitMod.value);
 
   let roll = `${count}D20`;
   if (mod > 0) roll += `+${mod}`;
@@ -75,68 +72,66 @@ function buildHit(countOverride = null) {
 }
 
 function buildDamage() {
-  const count = Number(dmgCount.value);
-  const die   = dmgDie.value;
-  const mod   = Number(dmgMod.value);
+  let roll = `${dmgCount.value}D${dmgDie.value}`;
 
-  let roll = `${count}D${die}`;
-  if (mod > 0) roll += `+${mod}`;
-  if (mod < 0) roll += `${mod}`;
+  if (dmgMod.value > 0) roll += `+${dmgMod.value}`;
+  if (dmgMod.value < 0) roll += `${dmgMod.value}`;
+
+  const seals = Number(sealCount.value);
+  if (seals > 0) {
+    roll += `+${seals * 2}D6`;
+  }
 
   dmgOut.innerText = roll;
   return roll;
 }
 
 /* =====================================================
-   ADV/DIS VALIDATION (HIT ONLY)
+   ADV VALIDATION
    ===================================================== */
 
-function updateHitAdvState() {
-  const valid = Number(hitCount.value) === 1;
-  hitAdv.classList.toggle('disabled', !valid);
+function updateAdv() {
+  hitAdv.classList.toggle('disabled', Number(hitCount.value) !== 1);
 }
 
 /* =====================================================
-   INPUT HANDLERS
+   INPUT LISTENERS
    ===================================================== */
 
 [hitCount, hitMod].forEach(el => {
   el.addEventListener('input', () => {
     buildHit();
-    updateHitAdvState();
-    saveDiceData();
+    updateAdv();
+    save();
   });
 });
 
-[dmgCount, dmgDie, dmgMod].forEach(el => {
+[dmgCount, dmgDie, dmgMod, sealCount].forEach(el => {
   el.addEventListener('input', () => {
     buildDamage();
-    saveDiceData();
+    save();
   });
 });
 
 /* =====================================================
-   COPY BUTTONS (WITH FEEDBACK)
+   COPY ACTIONS
    ===================================================== */
 
 hitCopy.addEventListener('click', () => {
-  const roll = buildHit();
-  copyWithFeedback(hitCopy, formatHitOutput(roll));
+  copyWithFeedback(hitCopy, hitLabel(buildHit()));
 });
 
 hitAdv.addEventListener('click', () => {
   if (hitAdv.classList.contains('disabled')) return;
-  const roll = buildHit(2);
-  copyWithFeedback(hitAdv, formatHitOutput(roll));
+  copyWithFeedback(hitAdv, hitLabel(buildHit(2)));
 });
 
 dmgCopy.addEventListener('click', () => {
-  const roll = buildDamage();
-  copyWithFeedback(dmgCopy, formatDmgOutput(roll));
+  copyWithFeedback(dmgCopy, dmgLabel(buildDamage()));
 });
 
 /* =====================================================
-   NAME EDIT MODE (ONLY EDITABLE FIELD)
+   NAME EDIT
    ===================================================== */
 
 editBtn.addEventListener('click', () => {
@@ -146,7 +141,7 @@ editBtn.addEventListener('click', () => {
   if (editingName) {
     nameEl.focus();
   } else {
-    localStorage.setItem('baseName', nameEl.innerText.trim());
+    localStorage.setItem('baseName', baseName());
   }
 
   editBtn.innerText = editingName ? 'Save' : 'Edit';
@@ -156,30 +151,32 @@ editBtn.addEventListener('click', () => {
    PERSISTENCE
    ===================================================== */
 
-function saveDiceData() {
+function save() {
   localStorage.setItem('diceData', JSON.stringify({
     hitCount: hitCount.value,
-    hitMod:   hitMod.value,
+    hitMod: hitMod.value,
     dmgCount: dmgCount.value,
-    dmgDie:   dmgDie.value,
-    dmgMod:   dmgMod.value
+    dmgDie: dmgDie.value,
+    dmgMod: dmgMod.value,
+    seals: sealCount.value
   }));
 }
 
-(function loadSavedData() {
-  const diceData  = JSON.parse(localStorage.getItem('diceData') || '{}');
+(function load() {
+  const data = JSON.parse(localStorage.getItem('diceData') || '{}');
   const savedName = localStorage.getItem('baseName');
 
   if (savedName) nameEl.innerText = savedName;
 
-  hitCount.value = diceData.hitCount ?? 1;
-  hitMod.value   = diceData.hitMod ?? 0;
+  hitCount.value = data.hitCount ?? 1;
+  hitMod.value   = data.hitMod ?? 0;
 
-  dmgCount.value = diceData.dmgCount ?? 1;
-  dmgDie.value   = diceData.dmgDie ?? 8;
-  dmgMod.value   = diceData.dmgMod ?? 0;
+  dmgCount.value = data.dmgCount ?? 1;
+  dmgDie.value   = data.dmgDie ?? 8;
+  dmgMod.value   = data.dmgMod ?? 0;
+  sealCount.value = data.seals ?? 0;
 
   buildHit();
   buildDamage();
-  updateHitAdvState();
+  updateAdv();
 })();
