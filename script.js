@@ -4,6 +4,24 @@ const addBtn = document.getElementById("add");
 const STORAGE_KEY = "dice_actions";
 
 /* =========================
+   Toast helper
+========================= */
+
+function showToast(message) {
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.innerText = message;
+
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("show"));
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 200);
+  }, 5000);
+}
+
+/* =========================
    Clipboard helper
 ========================= */
 
@@ -27,7 +45,7 @@ function dieSelect(value = "8") {
   return `
     <select class="die">
       ${["4","6","8","10","12"].map(d =>
-        `<option value="${d}" ${d===value?"selected":""}>d${d}</option>`
+        `<option value="${d}" ${d === value ? "selected" : ""}>d${d}</option>`
       ).join("")}
     </select>
   `;
@@ -41,6 +59,7 @@ function damageRow(data = {}) {
       ${dieSelect(data.die || "8")}
       <input type="number" class="mod" value="${data.mod ?? 0}">
       <button class="copy-dmg">Copy</button>
+      <button class="del-dmg">✕</button>
     </div>
   `;
 }
@@ -64,7 +83,7 @@ function createAction(data = {}) {
         <span class="small">Modifier</span>
         <input type="number" class="hit-mod" value="${data.hitMod ?? 0}">
         <button class="hit">Copy</button>
-        <button class="adv">Adv/Dis</button>
+        <button class="adv">Adv</button>
       </div>
     </div>
 
@@ -99,6 +118,7 @@ function createAction(data = {}) {
   function bindDamage() {
     dmgBox.querySelectorAll(".dmg-row").forEach(row => {
       const btn = row.querySelector(".copy-dmg");
+      const del = row.querySelector(".del-dmg");
       const label = row.querySelector(".damage-label");
       const count = row.querySelector(".count");
       const die = row.querySelector(".die");
@@ -109,7 +129,22 @@ function createAction(data = {}) {
         if (mod.value > 0) roll += `+${mod.value}`;
         if (mod.value < 0) roll += mod.value;
 
-        copy(btn, `!${nameInput.value} Dmg (${label.value}):${roll}`);
+        copy(btn, `!${nameInput.value} (${label.value}):${roll}`);
+      };
+
+      del.onclick = () => {
+        if (dmgBox.children.length <= 1) return;
+
+        const deletedLabel = label.value || "Damage";
+        const actionName = nameInput.value || "Unnamed Action";
+
+        row.remove();
+        saveAll();
+        bindDamage();
+
+        showToast(
+          `Deleted "${deletedLabel}" damage from "${actionName}"`
+        );
       };
 
       [label, count, die, mod].forEach(el =>
