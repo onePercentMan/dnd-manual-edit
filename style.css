@@ -5,6 +5,10 @@ body {
   color: #fff;
 }
 
+#add{
+  margin-bottom: 15px;
+}
+
 button {
   background: #c62828;
   color: #fff;
@@ -77,7 +81,7 @@ div#app {
     display: flex;
     gap: 1vw;
     flex-wrap: wrap;
-    justify-content: space-evenly;
+    justify-content: flex-start;
 }
 
 .toast {
@@ -98,4 +102,20 @@ div#app {
 .toast.show {
   opacity: 1;
   transform: translateY(0);
+}
+
+button.del-dmg {
+  background: #444;
+}
+button.del-dmg:hover {
+  background: #a00000;
+}
+
+button.del-action {
+    background: #444;
+    float: right;
+}
+
+button.del-action:hover {
+  background: #a00000;
 }
