@@ -44,9 +44,14 @@ function copy(btn, text) {
 function dieSelect(value = "8") {
   return `
     <select class="die">
-      ${["4","6","8","10","12"].map(d =>
-        `<option value="${d}" ${d === value ? "selected" : ""}>d${d}</option>`
-      ).join("")}
+      ${["4", "6", "8", "10", "12"]
+        .map(
+          (d) =>
+            `<option value="${d}" ${
+              d === value ? "selected" : ""
+            }>d${d}</option>`
+        )
+        .join("")}
     </select>
   `;
 }
@@ -74,6 +79,7 @@ function createAction(data = {}) {
 
   el.innerHTML = `
     <div class="header">
+    <button class="del-action">Delete</button>
       <input class="name" value="${data.name || "New Action"}">
     </div>
 
@@ -97,16 +103,30 @@ function createAction(data = {}) {
   const nameInput = el.querySelector(".name");
   const hitMod = el.querySelector(".hit-mod");
   const dmgBox = el.querySelector(".damage-options");
+  const delActionBtn = el.querySelector(".del-action");
 
-  (data.damages?.length ? data.damages : [{}]).forEach(d =>
+  (data.damages?.length ? data.damages : [{}]).forEach((d) =>
     dmgBox.insertAdjacentHTML("beforeend", damageRow(d))
   );
 
-  el.querySelector(".hit").onclick = e =>
+  /* ---- Hit rolls ---- */
+
+  el.querySelector(".hit").onclick = (e) =>
     copy(e.target, `!${nameInput.value} Hit:1d20+${hitMod.value}`);
 
-  el.querySelector(".adv").onclick = e =>
+  el.querySelector(".adv").onclick = (e) =>
     copy(e.target, `!${nameInput.value} Hit:2d20+${hitMod.value}`);
+
+  /* ---- Delete action ---- */
+
+  delActionBtn.onclick = () => {
+    const actionName = nameInput.value || "Unnamed Action";
+    el.remove();
+    saveAll();
+    showToast(`Deleted action "${actionName}"`);
+  };
+
+  /* ---- Damage handling ---- */
 
   el.querySelector(".add-dmg").onclick = () => {
     if (dmgBox.children.length >= 2) return;
@@ -116,7 +136,7 @@ function createAction(data = {}) {
   };
 
   function bindDamage() {
-    dmgBox.querySelectorAll(".dmg-row").forEach(row => {
+    dmgBox.querySelectorAll(".dmg-row").forEach((row) => {
       const btn = row.querySelector(".copy-dmg");
       const del = row.querySelector(".del-dmg");
       const label = row.querySelector(".damage-label");
@@ -142,20 +162,16 @@ function createAction(data = {}) {
         saveAll();
         bindDamage();
 
-        showToast(
-          `Deleted "${deletedLabel}" damage from "${actionName}"`
-        );
+        showToast(`Deleted "${deletedLabel}" damage from "${actionName}"`);
       };
 
-      [label, count, die, mod].forEach(el =>
+      [label, count, die, mod].forEach((el) =>
         el.addEventListener("input", saveAll)
       );
     });
   }
 
-  [nameInput, hitMod].forEach(el =>
-    el.addEventListener("input", saveAll)
-  );
+  [nameInput, hitMod].forEach((el) => el.addEventListener("input", saveAll));
 
   bindDamage();
   app.appendChild(el);
@@ -166,15 +182,15 @@ function createAction(data = {}) {
 ========================= */
 
 function saveAll() {
-  const actions = [...document.querySelectorAll(".action")].map(a => ({
+  const actions = [...document.querySelectorAll(".action")].map((a) => ({
     name: a.querySelector(".name").value,
     hitMod: a.querySelector(".hit-mod").value,
-    damages: [...a.querySelectorAll(".dmg-row")].map(r => ({
+    damages: [...a.querySelectorAll(".dmg-row")].map((r) => ({
       label: r.querySelector(".damage-label").value,
       count: r.querySelector(".count").value,
       die: r.querySelector(".die").value,
-      mod: r.querySelector(".mod").value
-    }))
+      mod: r.querySelector(".mod").value,
+    })),
   }));
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(actions));
