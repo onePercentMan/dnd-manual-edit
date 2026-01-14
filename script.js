@@ -41,17 +41,12 @@ function copy(btn, text) {
    UI builders
 ========================= */
 
-function dieSelect(value = "8") {
+function dieSelect(value = "4") {
   return `
     <select class="die">
-      ${["4", "6", "8", "10", "12"]
-        .map(
-          (d) =>
-            `<option value="${d}" ${
-              d === value ? "selected" : ""
-            }>d${d}</option>`
-        )
-        .join("")}
+      ${["4","6","8","10","12","100"].map(d =>
+        `<option value="${d}" ${d === value ? "selected" : ""}>D${d}</option>`
+      ).join("")}
     </select>
   `;
 }
@@ -59,9 +54,9 @@ function dieSelect(value = "8") {
 function damageRow(data = {}) {
   return `
     <div class="row dmg-row">
-      <input class="damage-label" value="${data.label || "Damage"}">
+      <input class="damage-label" value="${data.label ?? "DMG"}">
       <input type="number" class="count" value="${data.count ?? 1}" min="1">
-      ${dieSelect(data.die || "8")}
+      ${dieSelect(data.die ?? "4")}
       <input type="number" class="mod" value="${data.mod ?? 0}">
       <button class="copy-dmg">Copy</button>
       <button class="del-dmg">✕</button>
@@ -79,9 +74,14 @@ function createAction(data = {}) {
 
   el.innerHTML = `
     <div class="header">
-    <button class="del-action">Delete</button>
-      <input class="name" value="${data.name || "New Action"}">
+      <button class="del-action">Delete</button>
+      <input
+        class="name"
+        value="${data.name ?? ""}"
+        placeholder="Weapon / Action / Spell Name">
     </div>
+
+    <div class="name-warning">⚠ Please name this action before using it</div>
 
     <div class="roll">
       <div class="rollname">Hit</div>
@@ -89,7 +89,7 @@ function createAction(data = {}) {
         <span class="small">Modifier</span>
         <input type="number" class="hit-mod" value="${data.hitMod ?? 0}">
         <button class="hit">Copy</button>
-        <button class="adv">Adv</button>
+        <button class="adv">Adv/Dis</button>
       </div>
     </div>
 
@@ -101,23 +101,41 @@ function createAction(data = {}) {
   `;
 
   const nameInput = el.querySelector(".name");
+  const warning = el.querySelector(".name-warning");
   const hitMod = el.querySelector(".hit-mod");
   const dmgBox = el.querySelector(".damage-options");
   const delActionBtn = el.querySelector(".del-action");
 
-  (data.damages?.length ? data.damages : [{}]).forEach((d) =>
+  function nameMissing() {
+    return !nameInput.value.trim();
+  }
+
+  function enforceName() {
+    if (nameMissing()) {
+      el.classList.add("needs-name");
+      return true;
+    }
+    el.classList.remove("needs-name");
+    return false;
+  }
+
+  (data.damages?.length ? data.damages : [{}]).forEach(d =>
     dmgBox.insertAdjacentHTML("beforeend", damageRow(d))
   );
 
-  /* ---- Hit rolls ---- */
+  /* ---- Hit ---- */
 
-  el.querySelector(".hit").onclick = (e) =>
-    copy(e.target, `!${nameInput.value} Hit:1d20+${hitMod.value}`);
+  el.querySelector(".hit").onclick = e => {
+    if (enforceName()) return;
+    copy(e.target, `!${nameInput.value} Hit:1D20+${hitMod.value}`);
+  };
 
-  el.querySelector(".adv").onclick = (e) =>
-    copy(e.target, `!${nameInput.value} Hit:2d20+${hitMod.value}`);
+  el.querySelector(".adv").onclick = e => {
+    if (enforceName()) return;
+    copy(e.target, `!${nameInput.value} Hit:2D20+${hitMod.value}`);
+  };
 
-  /* ---- Delete action ---- */
+  /* ---- Delete Action ---- */
 
   delActionBtn.onclick = () => {
     const actionName = nameInput.value || "Unnamed Action";
@@ -126,17 +144,16 @@ function createAction(data = {}) {
     showToast(`Deleted action "${actionName}"`);
   };
 
-  /* ---- Damage handling ---- */
+  /* ---- Damage ---- */
 
   el.querySelector(".add-dmg").onclick = () => {
-    if (dmgBox.children.length >= 2) return;
-    dmgBox.insertAdjacentHTML("beforeend", damageRow({ label: "Alt" }));
+    dmgBox.insertAdjacentHTML("beforeend", damageRow({ label: "DMG" }));
     bindDamage();
     saveAll();
   };
 
   function bindDamage() {
-    dmgBox.querySelectorAll(".dmg-row").forEach((row) => {
+    dmgBox.querySelectorAll(".dmg-row").forEach(row => {
       const btn = row.querySelector(".copy-dmg");
       const del = row.querySelector(".del-dmg");
       const label = row.querySelector(".damage-label");
@@ -145,7 +162,9 @@ function createAction(data = {}) {
       const mod = row.querySelector(".mod");
 
       btn.onclick = () => {
-        let roll = `${count.value}d${die.value}`;
+        if (enforceName()) return;
+
+        let roll = `${count.value}D${die.value}`;
         if (mod.value > 0) roll += `+${mod.value}`;
         if (mod.value < 0) roll += mod.value;
 
@@ -155,7 +174,7 @@ function createAction(data = {}) {
       del.onclick = () => {
         if (dmgBox.children.length <= 1) return;
 
-        const deletedLabel = label.value || "Damage";
+        const deletedLabel = label.value || "DMG";
         const actionName = nameInput.value || "Unnamed Action";
 
         row.remove();
@@ -165,15 +184,27 @@ function createAction(data = {}) {
         showToast(`Deleted "${deletedLabel}" damage from "${actionName}"`);
       };
 
-      [label, count, die, mod].forEach((el) =>
-        el.addEventListener("input", saveAll)
+      [label, count, die, mod].forEach(el =>
+        el.addEventListener("input", () => {
+          enforceName();
+          saveAll();
+        })
       );
     });
   }
 
-  [nameInput, hitMod].forEach((el) => el.addEventListener("input", saveAll));
+  nameInput.addEventListener("input", () => {
+    enforceName();
+    saveAll();
+  });
+
+  hitMod.addEventListener("input", () => {
+    enforceName();
+    saveAll();
+  });
 
   bindDamage();
+  enforceName();
   app.appendChild(el);
 }
 
@@ -182,15 +213,15 @@ function createAction(data = {}) {
 ========================= */
 
 function saveAll() {
-  const actions = [...document.querySelectorAll(".action")].map((a) => ({
+  const actions = [...document.querySelectorAll(".action")].map(a => ({
     name: a.querySelector(".name").value,
     hitMod: a.querySelector(".hit-mod").value,
-    damages: [...a.querySelectorAll(".dmg-row")].map((r) => ({
+    damages: [...a.querySelectorAll(".dmg-row")].map(r => ({
       label: r.querySelector(".damage-label").value,
       count: r.querySelector(".count").value,
       die: r.querySelector(".die").value,
-      mod: r.querySelector(".mod").value,
-    })),
+      mod: r.querySelector(".mod").value
+    }))
   }));
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(actions));
@@ -212,4 +243,4 @@ addBtn.onclick = () => {
 };
 
 loadAll();
-if (!app.children.length) createAction({ name: "True Name Trident" });
+if (!app.children.length) createAction();

@@ -5,7 +5,7 @@ body {
   color: #fff;
 }
 
-#add{
+#add {
   margin-bottom: 15px;
 }
 
@@ -21,17 +21,18 @@ button {
 button.adv {
   background: #1976d2;
 }
+
 button.copied {
   background: #39aa47;
 }
 
 .action {
-    background: #000;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 16px;
-    box-shadow: rgba(255,255,255,0.15) 0 0 0 1px;
-    width: max-content;
+  background: #000;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  box-shadow: rgba(255,255,255,0.15) 0 0 0 1px;
+  width: max-content;
 }
 
 .header input {
@@ -77,11 +78,11 @@ button.copied {
   opacity: 0.8;
 }
 
-div#app {
-    display: flex;
-    gap: 1vw;
-    flex-wrap: wrap;
-    justify-content: flex-start;
+#app {
+  display: flex;
+  gap: 1vw;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .toast {
@@ -104,18 +105,26 @@ div#app {
   transform: translateY(0);
 }
 
-button.del-dmg {
+button.del-dmg,
+button.del-action {
   background: #444;
 }
-button.del-dmg:hover {
+
+button.del-dmg:hover,
+button.del-action:hover {
   background: #a00000;
 }
 
 button.del-action {
-    background: #444;
-    float: right;
+  float: right;
 }
 
-button.del-action:hover {
-  background: #a00000;
+.name-warning {
+  color: #ffb74d;
+  font-size: 11px;
+  margin: 4px 0 6px;
+  display: none;
+}
+.action.needs-name .name-warning {
+  display: block;
 }
