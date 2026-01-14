@@ -81,6 +81,8 @@ function createAction(data = {}) {
         placeholder="Weapon / Action / Spell Name">
     </div>
 
+    <div class="name-warning">⚠ Please name this action before using it</div>
+
     <div class="roll">
       <div class="rollname">Hit</div>
       <div class="row">
@@ -99,9 +101,23 @@ function createAction(data = {}) {
   `;
 
   const nameInput = el.querySelector(".name");
+  const warning = el.querySelector(".name-warning");
   const hitMod = el.querySelector(".hit-mod");
   const dmgBox = el.querySelector(".damage-options");
   const delActionBtn = el.querySelector(".del-action");
+
+  function nameMissing() {
+    return !nameInput.value.trim();
+  }
+
+  function enforceName() {
+    if (nameMissing()) {
+      el.classList.add("needs-name");
+      return true;
+    }
+    el.classList.remove("needs-name");
+    return false;
+  }
 
   (data.damages?.length ? data.damages : [{}]).forEach(d =>
     dmgBox.insertAdjacentHTML("beforeend", damageRow(d))
@@ -109,11 +125,15 @@ function createAction(data = {}) {
 
   /* ---- Hit ---- */
 
-  el.querySelector(".hit").onclick = e =>
+  el.querySelector(".hit").onclick = e => {
+    if (enforceName()) return;
     copy(e.target, `!${nameInput.value} Hit:1D20+${hitMod.value}`);
+  };
 
-  el.querySelector(".adv").onclick = e =>
+  el.querySelector(".adv").onclick = e => {
+    if (enforceName()) return;
     copy(e.target, `!${nameInput.value} Hit:2D20+${hitMod.value}`);
+  };
 
   /* ---- Delete Action ---- */
 
@@ -142,6 +162,8 @@ function createAction(data = {}) {
       const mod = row.querySelector(".mod");
 
       btn.onclick = () => {
+        if (enforceName()) return;
+
         let roll = `${count.value}D${die.value}`;
         if (mod.value > 0) roll += `+${mod.value}`;
         if (mod.value < 0) roll += mod.value;
@@ -163,16 +185,26 @@ function createAction(data = {}) {
       };
 
       [label, count, die, mod].forEach(el =>
-        el.addEventListener("input", saveAll)
+        el.addEventListener("input", () => {
+          enforceName();
+          saveAll();
+        })
       );
     });
   }
 
-  [nameInput, hitMod].forEach(el =>
-    el.addEventListener("input", saveAll)
-  );
+  nameInput.addEventListener("input", () => {
+    enforceName();
+    saveAll();
+  });
+
+  hitMod.addEventListener("input", () => {
+    enforceName();
+    saveAll();
+  });
 
   bindDamage();
+  enforceName();
   app.appendChild(el);
 }
 

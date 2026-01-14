@@ -118,3 +118,13 @@ button.del-action:hover {
 button.del-action {
   float: right;
 }
+
+.name-warning {
+  color: #ffb74d;
+  font-size: 11px;
+  margin: 4px 0 6px;
+  display: none;
+}
+.action.needs-name .name-warning {
+  display: block;
+}
