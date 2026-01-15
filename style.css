@@ -5,10 +5,27 @@ body {
   color: #fff;
 }
 
-#add {
-  margin-bottom: 15px;
+/* Layout */
+.layout {
+  display: flex;
+  gap: 24px;
 }
 
+#app {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1vw;
+}
+
+.left {
+  flex: 1;
+}
+
+{{/* .right {
+  width: 300px;
+} */}}
+
+/* Buttons */
 button {
   background: #c62828;
   color: #fff;
@@ -26,11 +43,26 @@ button.copied {
   background: #39aa47;
 }
 
+#add {
+  margin-bottom: 15px;
+}
+
+/* Remove number spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  appearance: textfield;
+}
+
+/* Action cards */
 .action {
   background: #000;
   padding: 12px;
   border-radius: 10px;
-  margin-bottom: 16px;
   box-shadow: rgba(255,255,255,0.15) 0 0 0 1px;
   width: max-content;
 }
@@ -78,33 +110,24 @@ button.copied {
   opacity: 0.8;
 }
 
-#app {
-  display: flex;
-  gap: 1vw;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+/* Warnings */
+.name-warning,
+.field-warning {
+  color: #ffb74d;
+  font-size: 11px;
+  margin: 4px 0 6px;
+  display: none;
 }
 
-.toast {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #222;
-  border: 1px solid #fff;
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  z-index: 9999;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity .2s ease, transform .2s ease;
+.action.needs-name .name-warning {
+  display: block;
 }
 
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
+.action.invalid-field .field-warning {
+  display: block;
 }
 
+/* Delete buttons */
 button.del-dmg,
 button.del-action {
   background: #444;
@@ -119,12 +142,77 @@ button.del-action {
   float: right;
 }
 
-.name-warning {
-  color: #ffb74d;
-  font-size: 11px;
-  margin: 4px 0 6px;
-  display: none;
+/* Skills panel */
+.skills {
+  position: sticky;
+  top: 20px;
+  background: #000;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: rgba(255,255,255,0.15) 0 0 0 1px;
+  margin-bottom: 16px;
 }
-.action.needs-name .name-warning {
-  display: block;
+
+.skills h3 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+/* Skills table */
+.skills table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.skills th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  opacity: 0.8;
+  padding-bottom: 6px;
+}
+
+.skills td {
+  padding: 4px 0;
+}
+
+.skills td.mod {
+  width: 60px;
+}
+
+.skills td.copy {
+  width: 60px;
+  text-align: right;
+}
+
+.skills input {
+  width: 50px;
+}
+
+.skills button {
+  padding: 3px 8px;
+  font-size: 12px;
+}
+
+/* Right-side composite layout */
+.right-sticky {
+  position: sticky;
+  top: 20px;
+  display: flex;
+  gap: 16px;
+}
+
+/* Ability + Saves column */
+.right-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 160px;
+}
+
+/* Skills column */
+.right-right {
+  width: 300px;
 }

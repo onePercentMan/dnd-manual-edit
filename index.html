@@ -2,13 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dice Tool (UI Driven)</title>
+  <title>Dice Tool</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<button id="add">Add Action</button>
-<div id="app"></div>
+<div class="layout">
+
+  <div class="left">
+    <button id="add">Add Action</button>
+    <div id="app"></div>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="right">
+
+    <div class="right-sticky">
+
+      <!-- LEFT COLUMN (Ability + Saves) -->
+      <div class="right-left">
+        <div class="skills" id="ability-block">
+          <h3>Ability Checks</h3>
+          <div id="abilities"></div>
+        </div>
+
+        <div class="skills" id="save-block">
+          <h3>Saving Throws</h3>
+          <div id="saves"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN (Skills) -->
+      <div class="right-right">
+        <div class="skills" id="skill-block">
+          <h3>Skill Checks</h3>
+          <div id="skills"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
 <script src="script.js"></script>
 </body>
