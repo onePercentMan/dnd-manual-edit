@@ -21,9 +21,9 @@ body {
   flex: 1;
 }
 
-{{/* .right {
+/* .right {
   width: 300px;
-} */}}
+} */
 
 /* Buttons */
 button {
@@ -63,7 +63,7 @@ input[type="number"] {
   background: #000;
   padding: 12px;
   border-radius: 10px;
-  box-shadow: rgba(255,255,255,0.15) 0 0 0 1px;
+  box-shadow: rgba(255, 255, 255, 0.15) 0 0 0 1px;
   width: max-content;
 }
 
@@ -142,15 +142,14 @@ button.del-action {
   float: right;
 }
 
-/* Skills panel */
+/* Skills panel (NO STICKY HERE) */
 .skills {
-  position: sticky;
-  top: 20px;
   background: #000;
   border-radius: 10px;
   padding: 12px;
-  box-shadow: rgba(255,255,255,0.15) 0 0 0 1px;
+  box-shadow: rgba(255, 255, 255, 0.15) 0 0 0 1px;
   margin-bottom: 16px;
+  width: max-content;
 }
 
 .skills h3 {
@@ -175,7 +174,7 @@ button.del-action {
 }
 
 .skills td {
-  padding: 4px 0;
+  padding: 8px 3px; /* spacing between rows */
 }
 
 .skills td.mod {
@@ -183,7 +182,7 @@ button.del-action {
 }
 
 .skills td.copy {
-  width: 60px;
+  width: max-content;
   text-align: right;
 }
 
@@ -194,14 +193,16 @@ button.del-action {
 .skills button {
   padding: 3px 8px;
   font-size: 12px;
+  min-width: 64px; /* prevents layout shift */
+  white-space: nowrap;
 }
 
-/* Right-side composite layout */
+/* RIGHT SIDE STICKY WRAPPER (ONLY STICKY ELEMENT) */
 .right-sticky {
   position: sticky;
   top: 20px;
   display: flex;
-  gap: 16px;
+  gap: 2vw;
 }
 
 /* Ability + Saves column */
@@ -209,10 +210,15 @@ button.del-action {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: 160px;
+  width: max-content;
 }
 
 /* Skills column */
 .right-right {
   width: 300px;
+}
+
+.dmg-type {
+  width: 110px;
+  font-size: 12px;
 }
