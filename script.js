@@ -7,7 +7,28 @@ const ABILITIES_KEY = "dice_abilities";
 const SAVES_KEY = "dice_saves";
 
 /* =========================
-   Helpers
+   DAMAGE TYPES
+========================= */
+
+const DAMAGE_TYPES = [
+  "",
+  "Bludgeoning",
+  "Piercing",
+  "Slashing",
+  "Fire",
+  "Cold",
+  "Lightning",
+  "Thunder",
+  "Acid",
+  "Poison",
+  "Necrotic",
+  "Radiant",
+  "Psychic",
+  "Force",
+];
+
+/* =========================
+   HELPERS
 ========================= */
 
 function copy(btn, text) {
@@ -20,30 +41,6 @@ function copy(btn, text) {
       btn.classList.remove("copied");
     }, 1000);
   });
-}
-
-function toast(message) {
-  const t = document.createElement("div");
-  t.className = "toast";
-  t.innerText = message;
-
-  // HARD position lock (fixes your issue)
-  t.style.position = "fixed";
-  t.style.bottom = "20px";
-  t.style.right = "20px";
-  t.style.zIndex = "9999";
-
-  document.body.appendChild(t);
-
-  // trigger animation AFTER insertion
-  requestAnimationFrame(() => {
-    t.classList.add("show");
-  });
-
-  setTimeout(() => {
-    t.classList.remove("show");
-    setTimeout(() => t.remove(), 200);
-  }, 2000);
 }
 
 function formatRoll(base, mod) {
@@ -63,15 +60,23 @@ function isValidModifier(value) {
 
 function dieSelect(value = "4") {
   return `
-    <select class="die">
+    <select class="die" title="Type of die">
       ${["4", "6", "8", "10", "12", "100"]
-        .map(
-          (d) =>
-            `<option value="${d}" ${
-              d === value ? "selected" : ""
-            }>D${d}</option>`
-        )
+        .map(d => `<option value="${d}" ${d === value ? "selected" : ""}>D${d}</option>`)
         .join("")}
+    </select>
+  `;
+}
+
+function damageTypeSelect(value = "") {
+  return `
+    <select
+      class="dmg-type"
+      title="Damage Type (ie: Slashing, Fire, Force, etc.)"
+    >
+      ${DAMAGE_TYPES.map(
+        t => `<option value="${t}" ${t === value ? "selected" : ""}>${t || "Type"}</option>`
+      ).join("")}
     </select>
   `;
 }
@@ -79,10 +84,25 @@ function dieSelect(value = "4") {
 function damageRow(data = {}) {
   return `
     <div class="row dmg-row">
-      <input class="damage-label" value="${data.label ?? "DMG"}">
-      <input class="count" type="number" value="${data.count ?? 1}">
+      <input
+        class="damage-label"
+        value="${data.label ?? "DMG"}"
+        title="Damage Label"
+      >
+      <input
+        class="count"
+        type="number"
+        value="${data.count ?? 1}"
+        title="Dice Count / Number of Dice"
+      >
       ${dieSelect(data.die ?? "4")}
-      <input class="mod" type="text" value="${data.mod ?? "0"}">
+      <input
+        class="mod"
+        type="text"
+        value="${data.mod ?? "0"}"
+        title="Damage Modifier"
+      >
+      ${damageTypeSelect(data.type ?? "")}
       <button class="copy-dmg">Copy</button>
       <button class="del-dmg">✕</button>
     </div>
@@ -96,9 +116,11 @@ function createAction(data = {}) {
   el.innerHTML = `
     <div class="header">
       <button class="del-action">Delete</button>
-      <input class="name" value="${
-        data.name ?? ""
-      }" placeholder="Weapon / Action / Spell Name">
+      <input
+        class="name"
+        value="${data.name ?? ""}"
+        placeholder="Weapon / Action / Spell Name"
+      >
     </div>
 
     <div class="name-warning">⚠ Please name this action before using it</div>
@@ -108,7 +130,12 @@ function createAction(data = {}) {
       <div class="rollname">Hit</div>
       <div class="row">
         <span class="small">Modifier</span>
-        <input class="hit-mod" type="text" value="${data.hitMod ?? "0"}">
+        <input
+          class="hit-mod"
+          type="text"
+          value="${data.hitMod ?? "0"}"
+          title="Modifier"
+        >
         <button class="hit">Copy</button>
         <button class="adv">Adv/Dis</button>
       </div>
@@ -132,61 +159,34 @@ function createAction(data = {}) {
   }
 
   function enforceModifier(...mods) {
-    const invalid = mods.some((m) => !isValidModifier(m.value));
+    const invalid = mods.some(m => !isValidModifier(m.value));
     el.classList.toggle("invalid-field", invalid);
     return invalid;
   }
 
-  // restore saved damages
-  (data.damages?.length ? data.damages : [{}]).forEach((d) =>
+  (data.damages?.length ? data.damages : [{}]).forEach(d =>
     dmgBox.insertAdjacentHTML("beforeend", damageRow(d))
   );
 
-  // hit
-  el.querySelector(".hit").onclick = (e) => {
-    if (enforceName() || enforceModifier(hitMod)) return;
-    copy(
-      e.target,
-      `!${nameInput.value} Hit:${formatRoll("1D20", hitMod.value)}`
-    );
-  };
-
-  el.querySelector(".adv").onclick = (e) => {
-    if (enforceName() || enforceModifier(hitMod)) return;
-    copy(
-      e.target,
-      `!${nameInput.value} Hit:${formatRoll("2D20", hitMod.value)}`
-    );
-  };
-
-  // delete action (FIXED)
-  el.querySelector(".del-action").onclick = () => {
-    const label = nameInput.value || "Unnamed Action";
-    el.remove();
-    saveActions();
-    toast(`Deleted action: ${label}`);
-  };
-
-  el.querySelector(".add-dmg").onclick = () => {
-    dmgBox.insertAdjacentHTML("beforeend", damageRow());
-    bindDamage();
-    saveActions();
-  };
-
   function bindDamage() {
-    dmgBox.querySelectorAll(".dmg-row").forEach((row) => {
+    dmgBox.querySelectorAll(".dmg-row").forEach(row => {
       const btn = row.querySelector(".copy-dmg");
       const del = row.querySelector(".del-dmg");
       const label = row.querySelector(".damage-label");
       const count = row.querySelector(".count");
       const die = row.querySelector(".die");
       const mod = row.querySelector(".mod");
+      const type = row.querySelector(".dmg-type");
 
       btn.onclick = () => {
         if (enforceName() || enforceModifier(mod)) return;
+
+        const safeLabel = label.value.trim() || "DMG";
+        const typeText = type.value ? ` [${type.value}]` : "";
+
         copy(
           btn,
-          `!${nameInput.value} (${label.value}):${formatRoll(
+          `!${nameInput.value} (${safeLabel}${typeText}):${formatRoll(
             `${count.value}D${die.value}`,
             mod.value
           )}`
@@ -195,26 +195,36 @@ function createAction(data = {}) {
 
       del.onclick = () => {
         if (dmgBox.children.length <= 1) return;
-
-        const dmgLabel = label.value || "DMG";
-        const actionName = nameInput.value || "Unnamed Action";
-
         row.remove();
         saveActions();
-
-        toast(`Deleted damage: ${dmgLabel} (from ${actionName})`);
       };
 
-      [label, count, die, mod].forEach((i) => (i.oninput = saveActions));
+      [label, count, die, mod, type].forEach(i => (i.oninput = saveActions));
     });
   }
 
-  // FIX: warning now updates live
-  nameInput.oninput = () => {
-    enforceName();
+  el.querySelector(".add-dmg").onclick = () => {
+    dmgBox.insertAdjacentHTML("beforeend", damageRow());
+    bindDamage();
     saveActions();
   };
 
+  el.querySelector(".del-action").onclick = () => {
+    el.remove();
+    saveActions();
+  };
+
+  el.querySelector(".hit").onclick = e => {
+    if (enforceName() || enforceModifier(hitMod)) return;
+    copy(e.target, `!${nameInput.value} Hit:${formatRoll("1D20", hitMod.value)}`);
+  };
+
+  el.querySelector(".adv").onclick = e => {
+    if (enforceName() || enforceModifier(hitMod)) return;
+    copy(e.target, `!${nameInput.value} Hit:${formatRoll("2D20", hitMod.value)}`);
+  };
+
+  nameInput.oninput = saveActions;
   hitMod.oninput = saveActions;
 
   bindDamage();
@@ -223,18 +233,19 @@ function createAction(data = {}) {
 }
 
 /* =========================
-   Persistence
+   PERSISTENCE
 ========================= */
 
 function saveActions() {
-  const actions = [...document.querySelectorAll(".action")].map((a) => ({
+  const actions = [...document.querySelectorAll(".action")].map(a => ({
     name: a.querySelector(".name").value,
     hitMod: a.querySelector(".hit-mod").value,
-    damages: [...a.querySelectorAll(".dmg-row")].map((r) => ({
+    damages: [...a.querySelectorAll(".dmg-row")].map(r => ({
       label: r.querySelector(".damage-label").value,
       count: r.querySelector(".count").value,
       die: r.querySelector(".die").value,
       mod: r.querySelector(".mod").value,
+      type: r.querySelector(".dmg-type").value,
     })),
   }));
   localStorage.setItem(ACTIONS_KEY, JSON.stringify(actions));
@@ -246,7 +257,7 @@ function loadActions() {
 }
 
 /* =========================
-   TABLES (unchanged)
+   TABLES
 ========================= */
 
 function renderTable(containerId, rows, storageKey, suffix = "") {
@@ -256,27 +267,49 @@ function renderTable(containerId, rows, storageKey, suffix = "") {
   const table = document.createElement("table");
   table.innerHTML = `
     <thead>
-      <tr><th>Name</th><th class="mod">Mod</th><th></th></tr>
+      <tr>
+        <th>Name</th>
+        <th class="mod">Mod</th>
+        <th></th>
+        <th></th>
+      </tr>
     </thead>
     <tbody></tbody>
   `;
 
   const tbody = table.querySelector("tbody");
 
-  rows.forEach((name) => {
+  rows.forEach(name => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${name}</td>
-      <td class="mod"><input type="text" value="${saved[name] ?? "0"}"></td>
-      <td class="copy"><button>Copy</button></td>
+      <td class="mod">
+        <input type="text" value="${saved[name] ?? "0"}">
+      </td>
+      <td class="copy">
+        <button class="copy-btn">Copy</button>
+      </td>
+      <td class="copy">
+        <button class="adv-btn">Adv/Dis</button>
+      </td>
     `;
 
     const input = tr.querySelector("input");
-    const btn = tr.querySelector("button");
+    const copyBtn = tr.querySelector(".copy-btn");
+    const advBtn = tr.querySelector(".adv-btn");
 
-    btn.onclick = () => {
-      if (!isValidModifier(input.value)) return;
-      copy(btn, `!${name}${suffix}:${formatRoll("1D20", input.value)}`);
+    function invalid() {
+      return !isValidModifier(input.value);
+    }
+
+    copyBtn.onclick = () => {
+      if (invalid()) return;
+      copy(copyBtn, `!${name}${suffix}:${formatRoll("1D20", input.value)}`);
+    };
+
+    advBtn.onclick = () => {
+      if (invalid()) return;
+      copy(advBtn, `!${name}${suffix}:${formatRoll("2D20", input.value)}`);
     };
 
     input.oninput = () => {
