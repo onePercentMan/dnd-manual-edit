@@ -48,14 +48,14 @@ function sizeDamageTypeSelects() {
   const font = `${style.fontSize} ${style.fontFamily}`;
 
   let max = 0;
-  DAMAGE_TYPES.forEach(t => {
+  DAMAGE_TYPES.forEach((t) => {
     if (!t) return;
     max = Math.max(max, measureTextWidth(t, font));
   });
 
   const finalWidth = Math.ceil(max) + 36;
 
-  document.querySelectorAll(".dmg-type").forEach(sel => {
+  document.querySelectorAll(".dmg-type").forEach((sel) => {
     sel.style.width = `${finalWidth}px`;
   });
 }
@@ -120,7 +120,7 @@ function isValidModifier(value) {
 function filterActions(query) {
   const q = normalize(query);
 
-  document.querySelectorAll(".action").forEach(action => {
+  document.querySelectorAll(".action").forEach((action) => {
     if (!q) {
       action.style.display = "";
       return;
@@ -130,7 +130,7 @@ function filterActions(query) {
     let match = name.includes(q);
 
     if (!match) {
-      action.querySelectorAll(".dmg-row").forEach(row => {
+      action.querySelectorAll(".dmg-row").forEach((row) => {
         const label = normalize(row.querySelector(".damage-label")?.value);
         const type = normalize(row.querySelector(".dmg-type")?.value);
         if (label.includes(q) || type.includes(q)) match = true;
@@ -148,8 +148,11 @@ function filterActions(query) {
 function dieSelect(value = "4") {
   return `
     <select class="die">
-      ${["4","6","8","10","12","100"]
-        .map(d => `<option value="${d}" ${d===value?"selected":""}>D${d}</option>`)
+      ${["4", "6", "8", "10", "12", "100"]
+        .map(
+          (d) =>
+            `<option value="${d}" ${d === value ? "selected" : ""}>D${d}</option>`,
+        )
         .join("")}
     </select>
   `;
@@ -159,7 +162,8 @@ function damageTypeSelect(value = "") {
   return `
     <select class="dmg-type">
       ${DAMAGE_TYPES.map(
-        t => `<option value="${t}" ${t===value?"selected":""}>${t || "Type"}</option>`
+        (t) =>
+          `<option value="${t}" ${t === value ? "selected" : ""}>${t || "Type"}</option>`,
       ).join("")}
     </select>
   `;
@@ -219,12 +223,12 @@ function createAction(data = {}) {
     return bad;
   }
 
-  (data.damages?.length ? data.damages : [{}]).forEach(d =>
-    dmgBox.insertAdjacentHTML("beforeend", damageRow(d))
+  (data.damages?.length ? data.damages : [{}]).forEach((d) =>
+    dmgBox.insertAdjacentHTML("beforeend", damageRow(d)),
   );
 
   function bindDamage() {
-    dmgBox.querySelectorAll(".dmg-row").forEach(row => {
+    dmgBox.querySelectorAll(".dmg-row").forEach((row) => {
       const label = row.querySelector(".damage-label");
       const count = row.querySelector(".count");
       const die = row.querySelector(".die");
@@ -237,9 +241,12 @@ function createAction(data = {}) {
         if (enforceName() || !isValidModifier(mod.value)) return;
         const safeLabel = label.value.trim() || "DMG";
         const typeText = type.value ? ` [${type.value}]` : "";
-        copy(copyBtn,
+        copy(
+          copyBtn,
           `!${nameInput.value} (${safeLabel}${typeText}):${formatRoll(
-            `${count.value}D${die.value}`, mod.value)}`
+            `${count.value}D${die.value}`,
+            mod.value,
+          )}`,
         );
       };
 
@@ -248,10 +255,12 @@ function createAction(data = {}) {
         const dmgLabel = label.value || "DMG";
         row.remove();
         saveActions();
-        toast(`Deleted damage: ${dmgLabel} (from ${nameInput.value || "Unnamed Action"})`);
+        toast(
+          `Deleted damage: ${dmgLabel} (from ${nameInput.value || "Unnamed Action"})`,
+        );
       };
 
-      [label, count, die, mod].forEach(i => i.oninput = saveActions);
+      [label, count, die, mod].forEach((i) => (i.oninput = saveActions));
       type.onchange = () => {
         saveActions();
         resizeDamageTypesNextFrame();
@@ -273,14 +282,20 @@ function createAction(data = {}) {
     toast(`Deleted action: ${nameInput.value || "Unnamed Action"}`);
   };
 
-  el.querySelector(".hit").onclick = e => {
+  el.querySelector(".hit").onclick = (e) => {
     if (enforceName()) return;
-    copy(e.target, `!${nameInput.value} Hit:${formatRoll("1D20", hitMod.value)}`);
+    copy(
+      e.target,
+      `!${nameInput.value} Hit:${formatRoll("1D20", hitMod.value)}`,
+    );
   };
 
-  el.querySelector(".adv").onclick = e => {
+  el.querySelector(".adv").onclick = (e) => {
     if (enforceName()) return;
-    copy(e.target, `!${nameInput.value} Hit:${formatRoll("2D20", hitMod.value)}`);
+    copy(
+      e.target,
+      `!${nameInput.value} Hit:${formatRoll("2D20", hitMod.value)}`,
+    );
   };
 
   nameInput.oninput = () => {
@@ -300,10 +315,10 @@ function createAction(data = {}) {
 ========================= */
 
 function saveActions() {
-  const actions = [...document.querySelectorAll(".action")].map(a => ({
+  const actions = [...document.querySelectorAll(".action")].map((a) => ({
     name: a.querySelector(".name").value,
     hitMod: a.querySelector(".hit-mod").value,
-    damages: [...a.querySelectorAll(".dmg-row")].map(r => ({
+    damages: [...a.querySelectorAll(".dmg-row")].map((r) => ({
       label: r.querySelector(".damage-label").value,
       count: r.querySelector(".count").value,
       die: r.querySelector(".die").value,
@@ -327,7 +342,7 @@ function renderTable(containerId, rows, storageKey, suffix = "") {
   const box = document.getElementById(containerId);
   const saved = JSON.parse(localStorage.getItem(storageKey)) || {};
 
-  rows.forEach(name => {
+  rows.forEach((name) => {
     if (!isValidModifier(saved[name])) saved[name] = "0";
   });
   localStorage.setItem(storageKey, JSON.stringify(saved));
@@ -338,7 +353,7 @@ function renderTable(containerId, rows, storageKey, suffix = "") {
     <tbody></tbody>
   `;
 
-  rows.forEach(name => {
+  rows.forEach((name) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${name}</td>
@@ -348,10 +363,10 @@ function renderTable(containerId, rows, storageKey, suffix = "") {
     `;
     const input = tr.querySelector("input");
 
-    tr.querySelector(".copy-btn").onclick = e =>
+    tr.querySelector(".copy-btn").onclick = (e) =>
       copy(e.target, `!${name}${suffix}:${formatRoll("1D20", input.value)}`);
 
-    tr.querySelector(".adv-btn").onclick = e =>
+    tr.querySelector(".adv-btn").onclick = (e) =>
       copy(e.target, `!${name}${suffix}:${formatRoll("2D20", input.value)}`);
 
     input.oninput = () => {
@@ -372,19 +387,48 @@ addBtn.onclick = () => {
   saveActions();
 };
 
-document.getElementById("action-search").oninput = e =>
+document.getElementById("action-search").oninput = (e) =>
   filterActions(e.target.value);
 
 loadActions();
 if (!app.children.length) createAction();
 
-renderTable("skills", [
-  "Athletics","Acrobatics","Stealth","Perception","Insight","Investigation",
-  "Arcana","History","Nature","Religion","Deception","Intimidation",
-  "Performance","Persuasion","Sleight of Hand","Survival"
-], SKILLS_KEY);
+renderTable(
+  "skills",
+  [
+    "Acrobatics",
+    "Animal Handling",
+    "Arcana",
+    "Athletics",
+    "Deception",
+    "History",
+    "Insight",
+    "Intimidation",
+    "Investigation",
+    "Medicine",
+    "Nature",
+    "Perception",
+    "Performance",
+    "Persuasion",
+    "Religion",
+    "Sleight of Hand",
+    "Stealth",
+    "Survival",
+  ],
+  SKILLS_KEY,
+);
 
-renderTable("abilities", ["STR","DEX","CON","INT","WIS","CHA"], ABILITIES_KEY, " Check");
-renderTable("saves", ["STR","DEX","CON","INT","WIS","CHA"], SAVES_KEY, " Save");
+renderTable(
+  "abilities",
+  ["STR", "DEX", "CON", "INT", "WIS", "CHA"],
+  ABILITIES_KEY,
+  " Check",
+);
+renderTable(
+  "saves",
+  ["STR", "DEX", "CON", "INT", "WIS", "CHA"],
+  SAVES_KEY,
+  " Save",
+);
 
 resizeDamageTypesNextFrame();
