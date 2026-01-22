@@ -1,0 +1,10 @@
+{
+  "manifestVersion": 1,
+  "id": "io.github.purt.dndmanualedit",
+  "name": "DND Manual Edit",
+  "version": "1.0.0",
+  "entryPoint": "/index.html",
+  "author": "Purt",
+  "description": "Custom Dice Tool for D&D actions, skills, and saves",
+  "minimumTaleSpireVersion": "1.4.0"
+}
