@@ -1,25 +1,26 @@
 body {
   background: #1b1b1b;
   font-family: system-ui, sans-serif;
-  padding: 30px;
+  padding: 12px;
   color: #fff;
 }
 
-/* Layout */
 .layout {
   display: flex;
-  gap: 24px;
+  gap: 16px;
+}
+
+.left {
+  flex: 1;
+  min-width: 360px;
 }
 
 #app {
   display: flex;
   flex-wrap: wrap;
-  gap: 1vw;
+  gap: 12px;
 }
 
-.left { flex: 1; }
-
-/* Buttons */
 button {
   background: #c62828;
   color: #fff;
@@ -27,44 +28,42 @@ button {
   border-radius: 20px;
   padding: 4px 10px;
   cursor: pointer;
-  min-width: 65px;
+  min-width: 64px;
 }
 
 button.adv,
-.adv-btn { background: #1976d2; }
-
-button.copied { background: #39aa47; }
-
-#add { margin-bottom: 15px; }
-
-/* Inputs */
-input[type="text"],
-input[type="number"] { width: 50px; }
-
-input[type="number"] {
-  appearance: textfield;
-  width: 35px;
+.adv-btn {
+  background: #1976d2;
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+button.copied {
+  background: #39aa47;
 }
 
-/* Action cards */
+#add {
+  margin-bottom: 8px;
+}
+
+#action-search {
+  width: -webkit-fill-available;
+  max-width: 360px;
+  margin-bottom: 12px;
+}
+
+/* ACTION CARD */
+
 .action {
   background: #000;
   padding: 12px;
   border-radius: 10px;
-  box-shadow: rgba(255,255,255,0.15) 0 0 0 1px;
-  width: max-content;
+  box-shadow: rgba(255, 255, 255, 0.15) 0 0 0 1px;
+  width: 360px;
 }
 
 .header input {
+  width: -webkit-fill-available;
   font-weight: 600;
   margin-bottom: 6px;
-  width: -webkit-fill-available;
 }
 
 .roll {
@@ -83,22 +82,9 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .row {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   align-items: center;
-  margin-bottom: 4px;
-}
-
-.row select { width: 60px; }
-
-.damage-label {
-  width: 80px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* dmg-type width is JS-controlled */
-.dmg-type {
-  font-size: 12px;
 }
 
 .small {
@@ -106,34 +92,72 @@ input[type="number"]::-webkit-outer-spin-button {
   opacity: 0.8;
 }
 
-/* Warnings */
+/* INPUTS */
+
+input[type="text"],
+input[type="number"] {
+  width: 50px;
+}
+
+input[type="number"] {
+  appearance: textfield;
+  width: 36px;
+}
+
+input::-webkit-inner-spin-button,
+input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.damage-label {
+  width: -webkit-fill-available;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dmg-type {
+  font-size: 12px;
+}
+
+/* BUTTON GROUPING FOR 360px */
+
+.row button {
+  flex: 0 0 auto;
+}
+
+button.del-dmg {
+  background: #444;
+  min-width: 36px;
+  padding: 4px;
+  opacity: 0.85;
+}
+
+button.del-dmg:hover {
+  background: #a00000;
+}
+
+/* WARNINGS */
+
 .name-warning,
 .field-warning {
   color: #ffb74d;
   font-size: 11px;
-  margin: 4px 0 6px;
+  margin: 4px 0;
   display: none;
 }
 
-.action.needs-name .name-warning { display: block; }
-.action.invalid-field .field-warning { display: block; }
+.action.needs-name .name-warning {
+  display: block;
+}
 
-/* Delete buttons */
-button.del-dmg,
-button.del-action { background: #444; }
+/* SKILLS */
 
-button.del-dmg:hover,
-button.del-action:hover { background: #a00000; }
-
-button.del-action { float: right; }
-
-/* Skills panels */
 .skills {
   background: #000;
   border-radius: 10px;
   padding: 12px;
-  box-shadow: rgba(255,255,255,0.15) 0 0 0 1px;
-  margin-bottom: 16px;
+  box-shadow: rgba(255, 255, 255, 0.15) 0 0 0 1px;
+  margin-bottom: 12px;
 }
 
 .skills h3 {
@@ -142,61 +166,66 @@ button.del-action { float: right; }
   text-transform: uppercase;
 }
 
-/* Tables */
 .skills table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
 }
 
-.skills th {
-  text-align: left;
-  font-size: 11px;
-  text-transform: uppercase;
-  opacity: 0.8;
-  padding-bottom: 6px;
+.skills td {
+  padding: 6px 3px;
 }
 
-.skills td { padding: 8px 3px; }
-
-.skills td.mod { width: 40px; }
-
-.skills td.copy {
-  width: max-content;
-  text-align: right;
-}
-
-.skills input { width: 50px; }
-
-.skills button {
-  padding: 3px 8px;
-  font-size: 12px;
-  min-width: 64px;
-  white-space: nowrap;
-}
-
-/* RIGHT SIDE */
 .right-sticky {
   position: sticky;
-  top: 20px;
+  top: 12px;
   display: flex;
-  gap: 2vw;
-  max-width: 100%;
-  overflow-x: hidden;
-  overflow-y: visible;
-}
-
-.right-left {
-  display: flex;
-  flex-direction: column;
   gap: 16px;
-  flex: 0 0 auto;
-  min-width: 0;
 }
 
 .right-right {
-  width: 300px;
-  flex-shrink: 0;
-  min-width: 0;
-  overflow-x: auto;
+  width: 280px;
+}
+
+/* DAMAGE ROW LAYOUT */
+
+.dmg-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dmg-line {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+/* Buttons on their own line, left-aligned */
+.dmg-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.dmg-actions button {
+  min-width: 64px;
+}
+
+/* Delete styling */
+button.del-dmg {
+  background: #444;
+}
+
+button.del-dmg:hover {
+  background: #a00000;
+}
+
+button.del-action,
+button.add-dmg {
+  float: right;
+  margin-left: 5px;
 }

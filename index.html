@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Dice Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,12 +13,10 @@
   <div class="left">
     <button id="add">Add Action</button>
 
-    <!-- 🔍 Action Search -->
     <input
       id="action-search"
       type="text"
       placeholder="Search actions (name, damage label, damage type)"
-      style="display:block;margin-bottom:12px;width:100%;max-width:420px;"
     >
 
     <div id="app"></div>
@@ -27,19 +26,19 @@
     <div class="right-sticky">
 
       <div class="right-left">
-        <div class="skills" id="ability-block">
+        <div class="skills">
           <h3>Ability Checks</h3>
           <div id="abilities"></div>
         </div>
 
-        <div class="skills" id="save-block">
+        <div class="skills">
           <h3>Saving Throws</h3>
           <div id="saves"></div>
         </div>
       </div>
 
       <div class="right-right">
-        <div class="skills" id="skill-block">
+        <div class="skills">
           <h3>Skill Checks</h3>
           <div id="skills"></div>
         </div>

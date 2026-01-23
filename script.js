@@ -173,15 +173,22 @@ function damageRow(data = {}) {
   return `
     <div class="row dmg-row">
       <input class="damage-label" value="${data.label ?? "DMG"}">
-      <input class="count" type="number" value="${data.count ?? 1}">
-      ${dieSelect(data.die ?? "4")}
-      <input class="mod" type="text" value="${data.mod ?? "0"}">
-      ${damageTypeSelect(data.type ?? "")}
-      <button class="copy-dmg">Copy</button>
-      <button class="del-dmg">✕</button>
+
+      <div class="dmg-line">
+        <input class="count" type="number" value="${data.count ?? 1}">
+        ${dieSelect(data.die ?? "4")}
+        <input class="mod" type="text" value="${data.mod ?? "0"}">
+        ${damageTypeSelect(data.type ?? "")}
+      </div>
+
+      <div class="dmg-actions">
+        <button class="copy-dmg">Copy</button>
+        <button class="del-dmg">✕</button>
+      </div>
     </div>
   `;
 }
+
 
 function createAction(data = {}) {
   const el = document.createElement("div");
@@ -190,6 +197,7 @@ function createAction(data = {}) {
   el.innerHTML = `
     <div class="header">
       <button class="del-action">Delete</button>
+      <button class="add-dmg">Add Damage Option</button>
       <input class="name" value="${data.name ?? ""}" placeholder="Weapon / Action / Spell Name">
     </div>
 
@@ -201,15 +209,16 @@ function createAction(data = {}) {
       <div class="row">
         <span class="small">Modifier</span>
         <input class="hit-mod" type="text" value="${data.hitMod ?? "0"}">
-        <button class="hit">Copy</button>
-        <button class="adv">Adv/Dis</button>
+        <div class="dmg-buttons">
+          <button class="hit">Copy</button>
+          <button class="adv">Adv/Dis</button>
+        </div>
       </div>
     </div>
 
     <div class="roll">
       <div class="rollname">Damage</div>
       <div class="damage-options"></div>
-      <button class="add-dmg">Add Damage Option</button>
     </div>
   `;
 
