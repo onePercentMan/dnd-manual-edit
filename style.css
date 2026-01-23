@@ -5,6 +5,11 @@ body {
   color: #fff;
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+
 .layout {
   display: flex;
   gap: 16px;
@@ -45,10 +50,17 @@ button.copied {
 }
 
 #action-search {
-  width: -webkit-fill-available;
   max-width: 360px;
   margin-bottom: 12px;
 }
+
+.header input,
+.damage-label,
+#action-search {
+  width: 100%;
+  min-width: 0;
+}
+
 
 /* ACTION CARD */
 
@@ -61,7 +73,6 @@ button.copied {
 }
 
 .header input {
-  width: -webkit-fill-available;
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -110,7 +121,6 @@ input::-webkit-outer-spin-button {
 }
 
 .damage-label {
-  width: -webkit-fill-available;
   font-size: 12px;
   font-weight: 600;
 }
@@ -196,14 +206,15 @@ button.del-dmg:hover {
 }
 
 .dmg-line {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 100%;
+    justify-content: space-between;
 }
 
-/* Buttons on their own line, left-aligned */
+
 .dmg-actions {
   display: flex;
   gap: 6px;
@@ -213,7 +224,9 @@ button.del-dmg:hover {
 
 .dmg-actions button {
   min-width: 64px;
+  flex-shrink: 0;
 }
+
 
 /* Delete styling */
 button.del-dmg {
@@ -224,8 +237,24 @@ button.del-dmg:hover {
   background: #a00000;
 }
 
-button.del-action,
-button.add-dmg {
-  float: right;
-  margin-left: 5px;
+.header {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-direction: column-reverse;
+}
+
+.header input.name {
+  flex: 1;
+  min-width: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.row.dmg-row {
+    margin-bottom: 15px;
 }
