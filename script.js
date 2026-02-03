@@ -189,7 +189,6 @@ function damageRow(data = {}) {
   `;
 }
 
-
 function createAction(data = {}) {
   const el = document.createElement("div");
   el.className = "action";
@@ -232,6 +231,16 @@ function createAction(data = {}) {
     return bad;
   }
 
+  function updateModifierWarning() {
+    const invalidHit = !isValidModifier(hitMod.value);
+
+    const invalidDamage = [...el.querySelectorAll(".mod")].some(
+      (m) => !isValidModifier(m.value),
+    );
+
+    el.classList.toggle("has-bad-mod", invalidHit || invalidDamage);
+  }
+
   (data.damages?.length ? data.damages : [{}]).forEach((d) =>
     dmgBox.insertAdjacentHTML("beforeend", damageRow(d)),
   );
@@ -269,7 +278,13 @@ function createAction(data = {}) {
         );
       };
 
-      [label, count, die, mod].forEach((i) => (i.oninput = saveActions));
+      [label, count, die].forEach((i) => (i.oninput = saveActions));
+
+      mod.oninput = () => {
+        updateModifierWarning();
+        saveActions();
+      };
+
       type.onchange = () => {
         saveActions();
         resizeDamageTypesNextFrame();
@@ -312,10 +327,14 @@ function createAction(data = {}) {
     saveActions();
   };
 
-  hitMod.oninput = saveActions;
+  hitMod.oninput = () => {
+    updateModifierWarning();
+    saveActions();
+  };
 
   bindDamage();
   enforceName();
+  updateModifierWarning();
   app.appendChild(el);
 }
 
@@ -429,13 +448,27 @@ renderTable(
 
 renderTable(
   "abilities",
-  ["STR", "DEX", "CON", "INT", "WIS", "CHA"],
+  [
+    "Strength",
+    "Dexterity",
+    "Constitution",
+    "Intelligence",
+    "Wisdom",
+    "Charisma",
+  ],
   ABILITIES_KEY,
   " Check",
 );
 renderTable(
   "saves",
-  ["STR", "DEX", "CON", "INT", "WIS", "CHA"],
+  [
+    "Strength",
+    "Dexterity",
+    "Constitution",
+    "Intelligence",
+    "Wisdom",
+    "Charisma",
+  ],
   SAVES_KEY,
   " Save",
 );
@@ -448,15 +481,14 @@ document.querySelectorAll(".tab").forEach((btn) => {
   btn.onclick = () => {
     const tab = btn.dataset.tab;
 
-    document.querySelectorAll(".tab").forEach(b =>
-      b.classList.toggle("active", b === btn)
-    );
+    document
+      .querySelectorAll(".tab")
+      .forEach((b) => b.classList.toggle("active", b === btn));
 
-    document.querySelectorAll(".tab-panel").forEach(p =>
-      p.classList.toggle("active", p.dataset.panel === tab)
-    );
+    document
+      .querySelectorAll(".tab-panel")
+      .forEach((p) => p.classList.toggle("active", p.dataset.panel === tab));
   };
 });
-
 
 resizeDamageTypesNextFrame();

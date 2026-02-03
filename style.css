@@ -25,9 +25,10 @@ body {
 
 /* APP GRID */
 #app {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-around;
 }
 
 /* BUTTONS */
@@ -112,6 +113,7 @@ button.copied {
 input[type="text"],
 input[type="number"] {
   min-width: 0;
+  width: 50px;
 }
 
 input[type="number"] {
@@ -136,10 +138,10 @@ input::-webkit-outer-spin-button {
 
 /* DAMAGE ROW */
 .dmg-row {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
 .dmg-line {
@@ -222,14 +224,15 @@ button.add-dmg {
 
 /* STICKY RIGHT */
 .right-sticky {
-  position: sticky;
-  top: 12px;
-  display: flex;
-  gap: 16px;
+	position: sticky;
+	top: 12px;
+	display: flex;
+	gap: 16px;
+	justify-content: space-evenly;
 }
 
 .right-right {
-  width: 280px;
+  width: auto;
 }
 
 /* =========================
@@ -264,6 +267,70 @@ button.add-dmg {
   width: 100%;
 }
 
+
 .tab-panel.active {
   display: block;
+}
+
+/* =========================
+   CHECKS: UNIFIED LAYOUT
+========================= */
+
+/* Kill table feel */
+.skills table,
+.skills thead,
+.skills tbody,
+.skills tr {
+  display: block;
+  width: 100%;
+}
+
+/* Name label */
+.skills td:first-child {
+	display: block;
+	width: 100%;
+	font-weight: 600;
+	/* margin-bottom: 4px; */
+	white-space: normal;
+}
+
+/* Modifier + buttons row */
+.skills td:not(:first-child) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Modifier input */
+.skills td.mod input {
+  width: 44px;
+  text-align: center;
+}
+
+/* Buttons */
+.skills td button {
+  min-width: 64px;
+}
+
+/* Prevent any overflow */
+.skills {
+  overflow-x: hidden;
+}
+
+/* Hide table headers in checks */
+.skills thead {
+  display: none;
+}
+
+.skills tr {
+    padding: 0px 5px 2px;
+    margin-bottom: 6px;
+    transition: all 0.3s ease-in-out;
+}
+
+.skills tr:hover {
+    box-shadow: rgba(255, 255, 255, 0.12) 0px 0px 20px 5px, rgba(255, 255, 255, 0.24) 0px 1px 2px;
+    border-radius: 5px;
+    background: #fff;
+    color: #000;
 }
