@@ -8,9 +8,15 @@
 </head>
 <body>
 
+<div class="tabs">
+  <button class="tab active" data-tab="actions">Actions</button>
+  <button class="tab" data-tab="checks">Checks</button>
+</div>
+
 <div class="layout">
 
-  <div class="left">
+  <!-- TAB 1: ACTIONS -->
+  <div class="left tab-panel active" data-panel="actions">
     <button id="add">Add Action</button>
 
     <input
@@ -22,7 +28,8 @@
     <div id="app"></div>
   </div>
 
-  <div class="right">
+  <!-- TAB 2: CHECKS -->
+  <div class="right tab-panel" data-panel="checks">
     <div class="right-sticky">
 
       <div class="right-left">

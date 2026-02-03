@@ -440,4 +440,23 @@ renderTable(
   " Save",
 );
 
+/* =========================
+   TABS
+========================= */
+
+document.querySelectorAll(".tab").forEach((btn) => {
+  btn.onclick = () => {
+    const tab = btn.dataset.tab;
+
+    document.querySelectorAll(".tab").forEach(b =>
+      b.classList.toggle("active", b === btn)
+    );
+
+    document.querySelectorAll(".tab-panel").forEach(p =>
+      p.classList.toggle("active", p.dataset.panel === tab)
+    );
+  };
+});
+
+
 resizeDamageTypesNextFrame();

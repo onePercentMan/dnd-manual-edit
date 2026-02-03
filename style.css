@@ -231,3 +231,39 @@ button.add-dmg {
 .right-right {
   width: 280px;
 }
+
+/* =========================
+   TABS
+========================= */
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tab {
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: #c62828;
+}
+
+/* =========================
+   TAB PANELS
+========================= */
+
+.tab-panel {
+  display: none;
+  width: 100%;
+}
+
+.tab-panel.active {
+  display: block;
+}
