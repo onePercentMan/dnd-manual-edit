@@ -3,29 +3,34 @@ body {
   font-family: system-ui, sans-serif;
   padding: 12px;
   color: #fff;
-}
-
-*, *::before, *::after {
   box-sizing: border-box;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
 
 .layout {
   display: flex;
   gap: 16px;
 }
 
+/* LEFT PANEL */
 .left {
   flex: 1;
-  min-width: 360px;
+  min-width: 420px;
 }
 
+/* APP GRID */
 #app {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
 
+/* BUTTONS */
 button {
   background: #c62828;
   color: #fff;
@@ -49,34 +54,34 @@ button.copied {
   margin-bottom: 8px;
 }
 
+/* SEARCH */
 #action-search {
-  max-width: 360px;
+  width: 100%;
+  max-width: 420px;
   margin-bottom: 12px;
 }
 
-.header input,
-.damage-label,
-#action-search {
-  width: 100%;
-  min-width: 0;
-}
-
-
-/* ACTION CARD */
+/* =========================
+   ACTION CARD
+========================= */
 
 .action {
   background: #000;
   padding: 12px;
   border-radius: 10px;
   box-shadow: rgba(255, 255, 255, 0.15) 0 0 0 1px;
-  width: 360px;
+  width: 100%;
+  max-width: 420px;
 }
 
+/* HEADER */
 .header input {
+  width: 100%;
   font-weight: 600;
   margin-bottom: 6px;
 }
 
+/* ROLLS */
 .roll {
   border: 1px solid #fff;
   border-radius: 6px;
@@ -104,10 +109,9 @@ button.copied {
 }
 
 /* INPUTS */
-
 input[type="text"],
 input[type="number"] {
-  width: 50px;
+  min-width: 0;
 }
 
 input[type="number"] {
@@ -121,6 +125,7 @@ input::-webkit-outer-spin-button {
 }
 
 .damage-label {
+  width: 100%;
   font-size: 12px;
   font-weight: 600;
 }
@@ -129,12 +134,34 @@ input::-webkit-outer-spin-button {
   font-size: 12px;
 }
 
-/* BUTTON GROUPING FOR 360px */
-
-.row button {
-  flex: 0 0 auto;
+/* DAMAGE ROW */
+.dmg-row {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-bottom: 10px;
 }
 
+.dmg-line {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.dmg-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.dmg-actions button {
+  min-width: 64px;
+}
+
+/* DELETE STYLES */
 button.del-dmg {
   background: #444;
   min-width: 36px;
@@ -146,8 +173,13 @@ button.del-dmg:hover {
   background: #a00000;
 }
 
-/* WARNINGS */
+button.del-action,
+button.add-dmg {
+  float: right;
+  margin-left: 5px;
+}
 
+/* WARNINGS */
 .name-warning,
 .field-warning {
   color: #ffb74d;
@@ -160,7 +192,9 @@ button.del-dmg:hover {
   display: block;
 }
 
-/* SKILLS */
+/* =========================
+   SKILLS (RIGHT PANEL)
+========================= */
 
 .skills {
   background: #000;
@@ -186,6 +220,7 @@ button.del-dmg:hover {
   padding: 6px 3px;
 }
 
+/* STICKY RIGHT */
 .right-sticky {
   position: sticky;
   top: 12px;
@@ -195,66 +230,4 @@ button.del-dmg:hover {
 
 .right-right {
   width: 280px;
-}
-
-/* DAMAGE ROW LAYOUT */
-
-.dmg-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.dmg-line {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    flex-wrap: nowrap;
-    width: 100%;
-    justify-content: space-between;
-}
-
-
-.dmg-actions {
-  display: flex;
-  gap: 6px;
-  justify-content: flex-end;
-  width: 100%;
-}
-
-.dmg-actions button {
-  min-width: 64px;
-  flex-shrink: 0;
-}
-
-
-/* Delete styling */
-button.del-dmg {
-  background: #444;
-}
-
-button.del-dmg:hover {
-  background: #a00000;
-}
-
-.header {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    flex-direction: column-reverse;
-}
-
-.header input.name {
-  flex: 1;
-  min-width: 0;
-}
-
-.header-actions {
-  display: flex;
-  gap: 6px;
-  margin-left: auto;
-}
-
-.row.dmg-row {
-    margin-bottom: 15px;
 }

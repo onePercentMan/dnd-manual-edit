@@ -196,11 +196,9 @@ function createAction(data = {}) {
 
   el.innerHTML = `
     <div class="header">
+      <button class="del-action">Delete</button>
+      <button class="add-dmg">Add Damage Option</button>
       <input class="name" value="${data.name ?? ""}" placeholder="Weapon / Action / Spell Name">
-      <div class="header-actions">
-        <button class="add-dmg">Add Damage Option</button>
-        <button class="del-action">Delete</button>
-      </div>
     </div>
 
     <div class="name-warning">⚠ Please name this action before using it</div>
