@@ -27,6 +27,18 @@ const DAMAGE_TYPES = [
   "Force",
 ];
 
+const initiativeMod = document.getElementById("initiative-mod");
+const initiativeCopy = document.getElementById("initiative-copy");
+const initiativeAdv = document.getElementById("initiative-adv");
+
+initiativeCopy.onclick = (e) => {
+  copy(e.target, `!Initiative:${formatRoll("1D20", initiativeMod.value)}`);
+};
+
+initiativeAdv.onclick = (e) => {
+  copy(e.target, `!Initiative:${formatRoll("2D20", initiativeMod.value)}`);
+};
+
 /* =========================
    TEXT MEASUREMENT
 ========================= */

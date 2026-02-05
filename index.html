@@ -1,61 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Dice Tool</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<div class="tabs">
-  <button class="tab active" data-tab="actions">Actions</button>
-  <button class="tab" data-tab="checks">Checks</button>
-</div>
-
-<div class="layout">
-
-  <!-- TAB 1: ACTIONS -->
-  <div class="left tab-panel active" data-panel="actions">
-    <button id="add">Add Action</button>
-
-    <input
-      id="action-search"
-      type="text"
-      placeholder="Search actions (name, damage label, damage type)"
-    >
-
-    <div id="app"></div>
-  </div>
-
-  <!-- TAB 2: CHECKS -->
-  <div class="right tab-panel" data-panel="checks">
-    <div class="right-sticky">
-
-      <div class="right-left">
-        <div class="skills">
-          <h3>Ability Checks</h3>
-          <div id="abilities"></div>
-        </div>
-
-        <div class="skills">
-          <h3>Saving Throws</h3>
-          <div id="saves"></div>
-        </div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dice Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="tabs">
+      <div class="tabs-left">
+        <button class="tab active" data-tab="actions">Actions</button>
+        <button class="tab" data-tab="checks">Checks</button>
       </div>
 
-      <div class="right-right">
-        <div class="skills">
-          <h3>Skill Checks</h3>
-          <div id="skills"></div>
-        </div>
+      <div class="tabs-right">
+        <span class="init-label">Initiative</span>
+        <input id="initiative-mod" type="number" value="0" />
+        <button id="initiative-copy">Copy</button>
+        <button id="initiative-adv" class="adv">Adv/Dis</button>
       </div>
-
     </div>
-  </div>
 
-</div>
+    <div class="layout">
+      <!-- TAB 1: ACTIONS -->
+      <div class="left tab-panel active" data-panel="actions">
+        <button id="add">Add Action</button>
 
-<script src="script.js"></script>
-</body>
+        <input
+          id="action-search"
+          type="text"
+          placeholder="Search actions (name, damage label, damage type)"
+        />
+
+        <div id="app"></div>
+      </div>
+
+      <!-- TAB 2: CHECKS -->
+      <div class="right tab-panel" data-panel="checks">
+        <div class="right-sticky">
+          <div class="right-left">
+            <div class="skills">
+              <h3>Ability Checks</h3>
+              <div id="abilities"></div>
+            </div>
+
+            <div class="skills">
+              <h3>Saving Throws</h3>
+              <div id="saves"></div>
+            </div>
+          </div>
+
+          <div class="right-right">
+            <div class="skills">
+              <h3>Skill Checks</h3>
+              <div id="skills"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
 </html>

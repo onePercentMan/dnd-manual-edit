@@ -76,7 +76,7 @@ button.copied {
   border-radius: 10px;
   box-shadow: rgba(255, 255, 255, 0.15) 0 0 0 1px;
   width: 100%;
-  max-width: 560px;
+  max-width: min(560px, 100%);
 }
 
 /* HEADER */
@@ -237,6 +237,7 @@ button.add-dmg {
 
 .right-right {
   width: auto;
+  max-width: 360px;
 }
 
 /* =========================
@@ -247,6 +248,12 @@ button.add-dmg {
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #1b1b1b;
+  padding-bottom: 8px;
+  padding-top: 8px;
 }
 
 .tab {
@@ -340,3 +347,41 @@ button.add-dmg {
   background: #fff;
   color: #000;
 }
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #1b1b1b;
+  padding: 8px 0;
+}
+
+.tabs-left {
+  display: flex;
+  gap: 8px;
+}
+
+.tabs-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.init-label {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+#initiative-mod {
+  width: 44px;
+  text-align: center;
+  border-radius: 6px;
+  border: none;
+  padding: 2px 4px;
+}
+
