@@ -1,3 +1,7 @@
+:root {
+  font-size: 14px;
+}
+
 body {
   background: #1b1b1b;
   font-family: system-ui, sans-serif;
@@ -20,15 +24,15 @@ body {
 /* LEFT PANEL */
 .left {
   flex: 1;
-  min-width: 420px;
+  min-width: 360px;
 }
 
 /* APP GRID */
 #app {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    justify-content: space-around;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-around;
 }
 
 /* BUTTONS */
@@ -72,7 +76,7 @@ button.copied {
   border-radius: 10px;
   box-shadow: rgba(255, 255, 255, 0.15) 0 0 0 1px;
   width: 100%;
-  max-width: 420px;
+  max-width: 560px;
 }
 
 /* HEADER */
@@ -146,10 +150,10 @@ input::-webkit-outer-spin-button {
 
 .dmg-line {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
   width: 100%;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .dmg-actions {
@@ -224,11 +228,11 @@ button.add-dmg {
 
 /* STICKY RIGHT */
 .right-sticky {
-	position: sticky;
-	top: 12px;
-	display: flex;
-	gap: 16px;
-	justify-content: space-evenly;
+  position: sticky;
+  top: 12px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-evenly;
 }
 
 .right-right {
@@ -267,7 +271,6 @@ button.add-dmg {
   width: 100%;
 }
 
-
 .tab-panel.active {
   display: block;
 }
@@ -287,11 +290,11 @@ button.add-dmg {
 
 /* Name label */
 .skills td:first-child {
-	display: block;
-	width: 100%;
-	font-weight: 600;
-	/* margin-bottom: 4px; */
-	white-space: normal;
+  display: block;
+  width: 100%;
+  font-weight: 600;
+  /* margin-bottom: 4px; */
+  white-space: normal;
 }
 
 /* Modifier + buttons row */
@@ -305,6 +308,7 @@ button.add-dmg {
 .skills td.mod input {
   width: 44px;
   text-align: center;
+  border-radius: 5px;
 }
 
 /* Buttons */
@@ -323,14 +327,16 @@ button.add-dmg {
 }
 
 .skills tr {
-    padding: 0px 5px 2px;
-    margin-bottom: 6px;
-    transition: all 0.3s ease-in-out;
+  padding: 0px 5px 2px;
+  margin-bottom: 6px;
+  transition: all 0.3s ease-in-out;
 }
 
 .skills tr:hover {
-    box-shadow: rgba(255, 255, 255, 0.12) 0px 0px 20px 5px, rgba(255, 255, 255, 0.24) 0px 1px 2px;
-    border-radius: 5px;
-    background: #fff;
-    color: #000;
+  box-shadow:
+    rgba(255, 255, 255, 0.12) 0px 0px 20px 5px,
+    rgba(255, 255, 255, 0.24) 0px 1px 2px;
+  border-radius: 5px;
+  background: #fff;
+  color: #000;
 }
