@@ -133,25 +133,52 @@ function filterActions(query) {
   const q = normalize(query);
 
   document.querySelectorAll(".action").forEach((action) => {
+    let match = false;
+
+    // Clear previous highlights
+    action.querySelector(".name")?.classList.remove("match-name");
+    action
+      .querySelectorAll(".damage-label")
+      .forEach((el) => el.classList.remove("match-label"));
+    action
+      .querySelectorAll(".dmg-type")
+      .forEach((el) => el.classList.remove("match-type"));
+
     if (!q) {
       action.style.display = "";
       return;
     }
 
-    const name = normalize(action.querySelector(".name")?.value);
-    let match = name.includes(q);
+    const nameInput = action.querySelector(".name");
+    const name = normalize(nameInput?.value);
 
-    if (!match) {
-      action.querySelectorAll(".dmg-row").forEach((row) => {
-        const label = normalize(row.querySelector(".damage-label")?.value);
-        const type = normalize(row.querySelector(".dmg-type")?.value);
-        if (label.includes(q) || type.includes(q)) match = true;
-      });
+    if (name.includes(q)) {
+      match = true;
+      nameInput.classList.add("match-name");
     }
+
+    action.querySelectorAll(".dmg-row").forEach((row) => {
+      const labelInput = row.querySelector(".damage-label");
+      const typeSelect = row.querySelector(".dmg-type");
+
+      const label = normalize(labelInput?.value);
+      const type = normalize(typeSelect?.value);
+
+      if (label.includes(q)) {
+        match = true;
+        labelInput.classList.add("match-label");
+      }
+
+      if (type.includes(q)) {
+        match = true;
+        typeSelect.classList.add("match-type");
+      }
+    });
 
     action.style.display = match ? "" : "none";
   });
 }
+
 
 /* =========================
    ACTIONS
@@ -378,7 +405,7 @@ function loadActions() {
    TABLES + INIT
 ========================= */
 
-function renderTable(containerId, rows, storageKey, suffix = "") {
+function renderTable(containerId, rows, storageKey, suffix = "", nameFormatter = (n) => n) {
   const box = document.getElementById(containerId);
   const saved = JSON.parse(localStorage.getItem(storageKey)) || {};
 
@@ -396,7 +423,7 @@ function renderTable(containerId, rows, storageKey, suffix = "") {
   rows.forEach((name) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${name}</td>
+      <td>${nameFormatter(name)}</td>
       <td class="mod"><input type="text" value="${saved[name]}"></td>
       <td><button class="copy-btn">Copy</button></td>
       <td><button class="adv-btn">Adv/Dis</button></td>
@@ -427,8 +454,17 @@ addBtn.onclick = () => {
   saveActions();
 };
 
-document.getElementById("action-search").oninput = (e) =>
-  filterActions(e.target.value);
+document.getElementById("action-search").oninput = (e) => {
+  const q = e.target.value;
+  const activeTab = document.querySelector(".tab.active")?.dataset.tab;
+
+  if (activeTab === "actions") {
+    filterActions(q);
+  } else {
+    filterChecks(q);
+  }
+};
+
 
 loadActions();
 if (!app.children.length) createAction();
@@ -485,6 +521,7 @@ renderTable(
   " Save",
 );
 
+
 /* =========================
    TABS
 ========================= */
@@ -493,6 +530,8 @@ document.querySelectorAll(".tab").forEach((btn) => {
   btn.onclick = () => {
     const tab = btn.dataset.tab;
 
+    document.body.classList.toggle("show-actions", tab === "actions");
+
     document
       .querySelectorAll(".tab")
       .forEach((b) => b.classList.toggle("active", b === btn));
@@ -500,7 +539,112 @@ document.querySelectorAll(".tab").forEach((btn) => {
     document
       .querySelectorAll(".tab-panel")
       .forEach((p) => p.classList.toggle("active", p.dataset.panel === tab));
+
+    // Update search placeholder context
+    const search = document.getElementById("action-search");
+    if (tab === "actions") {
+      search.placeholder =
+        "Search actions (name, damage label, damage type)";
+    } else {
+      search.placeholder =
+        "Search checks (str, dex, con, int, wis, cha, skill name)";
+    }
   };
 });
+
+function getSkillStatLabel(skillName) {
+  const map = {
+    acrobatics: "DEX",
+    "animal handling": "WIS",
+    arcana: "INT",
+    athletics: "STR",
+    deception: "CHA",
+    history: "INT",
+    insight: "WIS",
+    intimidation: "CHA",
+    investigation: "INT",
+    medicine: "WIS",
+    nature: "INT",
+    perception: "WIS",
+    performance: "CHA",
+    persuasion: "CHA",
+    religion: "INT",
+    "sleight of hand": "DEX",
+    stealth: "DEX",
+    survival: "WIS",
+  };
+
+  const key = normalize(skillName);
+  return map[key] ? `${skillName} (${map[key]})` : skillName;
+}
+
+
+function filterChecks(query) {
+  const q = normalize(query);
+
+  const statMap = {
+    str: { stat: "strength", skills: ["athletics"] },
+    dex: { stat: "dexterity", skills: ["acrobatics", "stealth", "sleight"] },
+    con: { stat: "constitution", skills: [] },
+    int: {
+      stat: "intelligence",
+      skills: ["arcana", "history", "investigation", "nature", "religion"],
+    },
+    wis: {
+      stat: "wisdom",
+      skills: ["perception", "insight", "medicine", "survival", "animal"],
+    },
+    cha: {
+      stat: "charisma",
+      skills: ["deception", "intimidation", "performance", "persuasion"],
+    },
+  };
+
+  const rows = document.querySelectorAll(".skills tr");
+
+  // 1️⃣ Detect explicit stat intent FIRST
+  let matchedStatKey = null;
+
+  Object.entries(statMap).forEach(([key, data]) => {
+    if (
+      q === key ||                  // "int"
+      q === data.stat ||            // "intelligence"
+      key.startsWith(q) ||          // "in" -> int
+      data.stat.startsWith(q)       // "intell"
+    ) {
+      matchedStatKey = key;
+    }
+  });
+
+  rows.forEach((row) => {
+    const name = normalize(row.querySelector("td")?.innerText || "");
+    let show = false;
+
+    // 2️⃣ Empty → show all
+    if (!q) {
+      show = true;
+    }
+
+    // 3️⃣ STAT MODE: show stat + its skills only
+    else if (matchedStatKey) {
+      const statData = statMap[matchedStatKey];
+
+      show =
+        name === statData.stat ||
+        statData.skills.some((skill) => name.includes(skill));
+    }
+
+    // 4️⃣ SKILL MODE: direct substring match only
+    else {
+      show = name.includes(q);
+    }
+
+    row.style.display = show ? "" : "none";
+  });
+}
+
+
+
+
 
 resizeDamageTypesNextFrame();

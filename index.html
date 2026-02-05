@@ -7,31 +7,35 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="tabs">
-      <div class="tabs-left">
-        <button class="tab active" data-tab="actions">Actions</button>
-        <button class="tab" data-tab="checks">Checks</button>
+    <div class="top-bar">
+      <div class="tabs">
+        <div class="tabs-left">
+          <button class="tab active" data-tab="actions">Actions</button>
+          <button class="tab" data-tab="checks">Checks</button>
+        </div>
+
+        <div class="tabs-right">
+          <span class="init-label">Initiative</span>
+          <input id="initiative-mod" type="number" value="0" />
+          <button id="initiative-copy">Copy</button>
+          <button id="initiative-adv" class="adv">Adv/Dis</button>
+        </div>
       </div>
 
-      <div class="tabs-right">
-        <span class="init-label">Initiative</span>
-        <input id="initiative-mod" type="number" value="0" />
-        <button id="initiative-copy">Copy</button>
-        <button id="initiative-adv" class="adv">Adv/Dis</button>
+      <!-- These stay sticky too -->
+      <div class="actions-controls">
+        <button id="add">Add Action</button>
+        <input
+          id="action-search"
+          type="text"
+          placeholder="Search actions (name, damage label, damage type)"
+        />
       </div>
     </div>
 
     <div class="layout">
       <!-- TAB 1: ACTIONS -->
       <div class="left tab-panel active" data-panel="actions">
-        <button id="add">Add Action</button>
-
-        <input
-          id="action-search"
-          type="text"
-          placeholder="Search actions (name, damage label, damage type)"
-        />
-
         <div id="app"></div>
       </div>
 
